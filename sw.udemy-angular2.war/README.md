@@ -42,3 +42,24 @@ Manually added CSS and `script` imports to `src/index.html`
 ```
 
 Added `src/app/app.component.html` from `medium.com`
+
+## Angular Live Development Server
+
+```bash
+$ cd sw.udemy-angular2.war/src/main/web/
+$ ng serve
+```
+
+## Adding modules
+
+Use `ng` to auto generate components, eg.
+
+```bash
+$ cd sw.udemy-angular2.war/src/main/web/
+$ ng generate component servers
+```
+
+Added components:
+* `server/servers.component` - Displays multiple `server.component`
+* `server/server.component`
+
