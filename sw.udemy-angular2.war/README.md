@@ -63,3 +63,25 @@ Added components:
 * `server/servers.component` - Displays multiple `server.component`
 * `server/server.component`
 
+## Data binding
+
+One way data binding, eg.
+
+```html
+<input
+    type="text"
+    class="form-control"
+    (input) = "onServerNameChanged($event)" />
+
+<p>serverName = <span [innerText] = "serverName"></span></p> 
+```
+
+Two way data binding, eg.
+
+```html
+<input
+    type="text"
+    class="form-control"
+    [(ngModel)] = "serverName" />
+```
+

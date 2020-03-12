@@ -2,7 +2,37 @@
     <div class="row">
         <div class="col-xs-12">
 
-            <button class="btn btn-primary" [disabled] = "!allowNewServer">Add Server</button>
+            <label>Server name</label>
+
+            <!-- One way data binding -->
+
+            <!--
+            <input
+                type="text"
+                class="form-control"
+                (input) = "onServerNameChanged($event)" />
+
+            <p>serverName = <span [innerText] = "serverName"></span></p> 
+            -->
+
+            <!-- Two way data binding -->
+
+            <input
+                type="text"
+                class="form-control"
+                [(ngModel)] = "serverName" />
+
+            <br />
+
+            <!-- Property and event binding -->
+
+            <button
+                class="btn btn-primary"
+                [disabled] = "!allowNewServer"
+                (click) = "onAddServer()"
+                >Add Server</button>
+
+            <p [innerText] = "serverCreationStatus"></p> 
 
             <hr />
             <h3>My many servers</h3>
