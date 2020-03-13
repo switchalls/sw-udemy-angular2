@@ -32,11 +32,17 @@
                 (click) = "onAddServer()"
                 >Add Server</button>
 
-            <p [innerText] = "serverCreationStatus"></p> 
-
             <hr />
+
             <h3>My many servers</h3>
-            <app-server></app-server>
+
+            <p *ngIf = "serverAdded; else nothingAddedYet">
+                <app-server *ngFor = "let server of servers"></app-server>
+            </p>
+
+            <ng-template #nothingAddedYet>
+                <p>Nothing added yet!</p>
+            </ng-template>
 
         </div>
     </div>

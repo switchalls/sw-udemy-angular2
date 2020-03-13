@@ -11,9 +11,11 @@ export class ServersComponent implements OnInit {
 
   allowNewServer: boolean = false;
 
-  serverCreationStatus: string = "";
+  serverAdded: boolean = false;
 
-  serverName: string = "TestServer";
+  serverName: string = "myServer";
+
+  servers = [];
 
   constructor() {
     setTimeout(() => {
@@ -25,7 +27,8 @@ export class ServersComponent implements OnInit {
   }
 
   onAddServer() {
-    this.serverCreationStatus = "Added server: " + this.serverName;
+    this.serverAdded = true;
+    this.servers.push(this.serverName);
   }
 
   // for one-way data binding

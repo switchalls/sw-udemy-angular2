@@ -85,3 +85,12 @@ Two way data binding, eg.
     [(ngModel)] = "serverName" />
 ```
 
+## Directives
+
+`*` = change DOM, eg.
+
+```html
+<p *ngIf = "serverAdded">Server created: {{ serverName }}</p> 
+```
+
+only add `paragraph` element if ...
