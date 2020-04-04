@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>sw.learning.angular</groupId>
-            <artifactId>sw-udemy-angular2-war</artifactId>
+            <artifactId>sw-udemy-angular2-webapp</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
@@ -78,7 +78,7 @@
                             <outputDirectory>${project.build.directory}/classes/resources/</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.parent.basedir}/sw.udemy-angular2.war/target/dist/</directory>
+                                    <directory>${project.parent.basedir}/sw.udemy-angular2.webapp/target/dist/</directory>
                                 </resource>
                             </resources>
                         </configuration>

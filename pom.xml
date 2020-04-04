@@ -21,7 +21,7 @@
 
     <modules>
         <module>sw.udemy-angular2.launcher</module>
-        <module>sw.udemy-angular2.war</module>
+        <module>sw.udemy-angular2.webapp</module>
     </modules>
 
 </project>

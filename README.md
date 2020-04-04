@@ -12,7 +12,7 @@ To execute:
 $ java -jar sw.udemy-angular2.launcher/target/sw-udemy-angular2-launcher-1.0.0-SNAPSHOT.war
 ```
 
-See `webapp` [overview](sw.udemy-angular2.war/README.md)
+See `webapp` [overview](sw.udemy-angular2.webapp/README.md)
 
 See `launcher` [overview](sw.udemy-angular2.launcher/README.md)
 

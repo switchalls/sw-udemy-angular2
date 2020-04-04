@@ -2,7 +2,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sw-udemy-angular2-war</artifactId>
+    <artifactId>sw-udemy-angular2-webapp</artifactId>
 
     <parent>
         <groupId>sw.learning.angular</groupId>
