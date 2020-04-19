@@ -15,7 +15,7 @@ export class ServerComponent  {
         this.serverStatus = Math.random() > 0.5 ? 'offline' : 'online';
     }
 
-    getColor() {
+    getBackgroundColor() {
         return this.serverStatus === 'online' ? 'lightgreen' : 'red';
     }
 
