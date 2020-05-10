@@ -37,6 +37,8 @@ See [trouble shooting](trouble-shooting.md)
 
 ## Extra reading
 
+* [Bootstrap toolkit](./bootstrap-toolkit.md)
+
 * [Internationalisation](https://angular.io/guide/i18n)
 
 * [Material components](https://material.angular.io/components/)
