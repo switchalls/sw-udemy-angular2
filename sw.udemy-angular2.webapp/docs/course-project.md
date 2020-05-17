@@ -98,3 +98,31 @@ Date: 2020-05-10T18:40:24.396Z - Hash: 316a72c5e94e8a7a39cf - Time: 4995ms
 
 The server will automatically rebuilt the application whenever changes are made.
 
+## Bean declarations
+
+```
+export class Recipe {
+
+    public name: string;
+    public description: string;
+    public imagePath: string;
+
+    constructor(name: string, description: string, imagePath: string) {
+        this.name = name;
+        this.description = description;
+        this.imagePath = imagePath;
+    }
+
+}
+```
+
+can be replaced with ...
+
+```
+export class Recipe {
+
+    constructor(public name: string, public description: string, public imagePath: string) {
+    }
+
+}
+```
