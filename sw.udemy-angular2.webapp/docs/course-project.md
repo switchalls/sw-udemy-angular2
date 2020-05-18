@@ -102,7 +102,15 @@ The server will automatically rebuilt the application whenever changes are made.
 
 ```
 export class Recipe {
+    constructor(public name: string, public description: string, public imagePath: string) {
+    }
+}
+```
 
+is shorthand for ...
+
+```
+export class Recipe {
     public name: string;
     public description: string;
     public imagePath: string;
@@ -112,17 +120,115 @@ export class Recipe {
         this.description = description;
         this.imagePath = imagePath;
     }
-
 }
 ```
 
-can be replaced with ...
+## Debugging tools
 
-```
-export class Recipe {
+* [Augury](https://augury.rangle.io/)
 
-    constructor(public name: string, public description: string, public imagePath: string) {
-    }
+## Property & Event Binding
 
-}
-```
+![Title](images/property-and-event-binding.png)
+
+* Two-way property binding
+  
+  ```
+  <input ... [(ngModel)] = "serverName" />
+  
+  <button (onclick)="onAddServer($event)">Add</button>
+  
+  export class CockpitComponent {
+      serverName = '';
+      
+      onAddServer(onclickEvent: MouseEvent) {
+        console.log(serverName);
+      }
+  }
+  ```
+
+* Passing references to HTML elements
+  
+  ```
+  <input ... #serverNameInput />
+  
+  <button (onclick)="onAddServer(#serverNameInput)">Add</button>
+
+  export class CockpitComponent {
+      onAddServer(serverNameInput: HTMLInputElement) {
+        console.log(serverNameInput.value);
+      }
+  }
+  ```
+
+* Binding directly to HTML elements
+  
+  ```
+  <input ... #serverNameInput />
+  
+  export class CockpitComponent {
+      @ViewChild('serverNameInput') serverNameInput: ElementRef;
+
+      onAddServer() {
+        console.log(serverNameInput.nativeElement.value);
+      }
+  }
+  ```
+
+* Passing data into components
+  
+  ```
+  export class ServerElementComponent {
+      @Input() serverElement: {type: string, name: string, content: string};
+  }
+    
+  <app-server-element
+      *ngFor="let e of serverElements"
+      [serverElement]="e"
+  ></app-server-element
+  ```
+
+* Sending data from components
+  
+  ```
+  export class CockpitComponent {  
+      @Output serverCreated = new EventOmitter<{serverName: string, serverContent: string}>();
+      
+      onAddServer(serverNameInput: HTMLInputElement, serverContentInput: HTMLInputElement) {
+        serverCreated.emit({serverName: serverNameInput.value, serverContent: serverContentInput.value});
+      }
+  }
+  
+  <app-cockpit (serverCreated)="onServerAdded($event)"></<app-cockpit>
+  
+  export class AppComponent {
+      onServerAdded(serverData: {serverName: string, serverContent: string}) {
+        console.log(serverData.serverName);
+      }
+  }
+  ```
+
+* Passing HTML content into components
+
+  `server-element.component.html`
+  ```
+  <div class="panel-body">
+      <ng-content></ng-content>
+  </div>
+  ```
+  
+  `app.component.html`
+  ```
+  <app-server-element *ngFor="let e of serverElements">
+      <p>
+          <strong *ngIf="e.type === 'server'">{{ e.content }}</strong>
+          <em *ngIf="e.type === 'blueprint'">{{ e.content }}</em>
+      </p>
+  </app-server-element
+  ```
+
+## Component Lifecycle Hooks
+
+![Lifecycle](images/component-lifecycle-hooks.png)
+
+
