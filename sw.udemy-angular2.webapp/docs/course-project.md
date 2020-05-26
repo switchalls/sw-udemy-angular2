@@ -32,12 +32,12 @@ However ... what you should do is ...
 
   ```
   "styles": [
-    "node_modules/bootstrap/dist/css/bootstrap.min.css",
-    "src/styles.css"
+      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "src/styles.css"
   ],
   "scripts": [
-    "node_modules/jquery/dist/jquery.min.js",
-    "node_modules/bootstrap/dist/js/bootstrap.min.js"
+      "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/bootstrap/dist/js/bootstrap.min.js"
   ]
   ```
 
@@ -131,93 +131,95 @@ export class Recipe {
 
 ![Title](images/property-and-event-binding.png)
 
-* Two-way property binding
-  
-  ```
-  <input ... [(ngModel)] = "serverName" />
-  
-  <button (onclick)="onAddServer($event)">Add</button>
-  
-  export class CockpitComponent {
-      serverName = '';
-      
-      onAddServer(onclickEvent: MouseEvent) {
-        console.log(serverName);
-      }
+### Two-way property binding
+
+```
+<input ... [(ngModel)] = "serverName" />
+
+<button (onclick)="onAddServer($event)">Add</button>
+
+export class CockpitComponent {
+  serverName = '';
+
+  onAddServer(onclickEvent: MouseEvent) {
+    console.log(serverName);
   }
-  ```
+}
+```
 
-* Passing references to HTML elements
-  
-  ```
-  <input ... #serverNameInput />
-  
-  <button (onclick)="onAddServer(#serverNameInput)">Add</button>
+### Passing references to HTML elements
 
-  export class CockpitComponent {
-      onAddServer(serverNameInput: HTMLInputElement) {
-        console.log(serverNameInput.value);
-      }
+```
+<input ... #serverNameInput />
+
+<button (onclick)="onAddServer(#serverNameInput)">Add</button>
+
+export class CockpitComponent {
+  onAddServer(serverNameInput: HTMLInputElement) {
+    console.log(serverNameInput.value);
   }
-  ```
+}
+```
 
-* Binding directly to HTML elements
-  
-  ```
-  <input ... #serverNameInput />
-  
-  export class CockpitComponent {
-      @ViewChild('serverNameInput') serverNameInput: ElementRef;
+### Binding directly to HTML elements
 
-      onAddServer() {
-        console.log(serverNameInput.nativeElement.value);
-      }
+```
+<input ... #serverNameInput />
+
+export class CockpitComponent {
+  @ViewChild('serverNameInput') serverNameInput: ElementRef;
+
+  onAddServer() {
+    console.log(serverNameInput.nativeElement.value);
   }
-  ```
+}
+```
 
-* Passing data into components
-  
-  ```
-  export class ServerElementComponent {
-      @Input() serverElement: {type: string, name: string, content: string};
+### Passing data into components
+
+```
+export class ServerElementComponent {
+  @Input() serverElement: {type: string, name: string, content: string};
+}
+
+<app-server-element
+  *ngFor="let i of serverElements"
+  [serverElement]="i"
+></app-server-element
+```
+
+### Sending data from components
+
+```
+export class CockpitComponent {
+  @Output serverCreated = new EventOmitter<{serverName: string, serverContent: string}>();
+
+  onAddServer(serverNameInput: HTMLInputElement, serverContentInput: HTMLInputElement) {
+    serverCreated.emit({serverName: serverNameInput.value, serverContent: serverContentInput.value});
   }
-    
-  <app-server-element
-      *ngFor="let e of serverElements"
-      [serverElement]="e"
-  ></app-server-element
-  ```
+}
 
-* Sending data from components
-  
-  ```
-  export class CockpitComponent {  
-      @Output serverCreated = new EventOmitter<{serverName: string, serverContent: string}>();
-      
-      onAddServer(serverNameInput: HTMLInputElement, serverContentInput: HTMLInputElement) {
-        serverCreated.emit({serverName: serverNameInput.value, serverContent: serverContentInput.value});
-      }
+<app-cockpit (serverCreated)="onServerAdded($event)"></<app-cockpit>
+
+export class AppComponent {
+  onServerAdded(serverData: {serverName: string, serverContent: string}) {
+    console.log(serverData.serverName);
   }
-  
-  <app-cockpit (serverCreated)="onServerAdded($event)"></<app-cockpit>
-  
-  export class AppComponent {
-      onServerAdded(serverData: {serverName: string, serverContent: string}) {
-        console.log(serverData.serverName);
-      }
-  }
-  ```
+}
+```
 
-* Passing HTML content into components
+### Passing HTML content into components
 
-  `server-element.component.html`
+* `server-element.component.html`
+
   ```
   <div class="panel-body">
       <ng-content></ng-content>
   </div>
   ```
-  
-  `app.component.html`
+
+* `app.component.html`
+
   ```
   <app-server-element *ngFor="let e of serverElements">
       <p>
@@ -231,4 +233,106 @@ export class Recipe {
 
 ![Lifecycle](images/component-lifecycle-hooks.png)
 
+## Directives
+
+![Directives](images/directives.png)
+
+### Core directives
+
+```
+<div *ngIf="!showOddNumbersOnly">
+  <li
+    *ngFor="let number of evenNumbers"
+    [ngClass]="{myCssClass: number < 5}"
+    [ngStyle]="{backgroundColor: number > 5 ? 'yellow' : 'transparent'}">
+    <div [ngSwitch]="number">
+      <p *ngSwitchCase="5">Value is 5</p>
+      <p *ngSwitchDefault">Value is ?</p>
+    </div>
+  </li>
+</div>
+```
+
+### Custom directives
+
+Create `blue-highlight/blue-highlight.directive.ts` using
+
+```bash
+$ ng generate directive blue-highlight`
+```
+
+Add implementation
+
+```
+@Directive({
+  selector: '[appBlueHighlight]'
+})
+export class BlueHighlightDirective implements OnInit {
+  @Input() defaultColor: string = 'transparent';
+  @Input() highlightColor: string = 'blue';
+
+  @HostBinding('style.backgroundColor') backgroundColor: string;
+
+  constructor(private elementRef: ElementRef) {
+  }
+
+  ngOnInit() {
+    this.backgroundColor = this.defaultColor;
+  }
+
+  @HostListener('mouseEnter') mouseOver(eventData: Event) {
+    this.backgroundColor = this.highlightColor;
+  }
+
+  @HostListener('mouseLeave') mouseLeave(eventData: Event) {
+    this.backgroundColor = this.defaultColor;
+  }
+}
+```
+
+Import declaration in `app.module.ts`
+
+```
+@NgModule({
+  declarations: [
+    BlueHighlightDirective
+  ],
+```
+
+Use directive in HTML content
+
+```
+<p appBlueHighlight [defaultColor]="'yellow'" [highlightColor]="'red'"> ... </p>
+```
+
+### Default directive property binding
+
+```
+<p [appBlueHighlight]="'red'"> ... </p>
+```
+
+Alias the `default` input with the dirtective's name, eg.
+
+```
+@Input('appBlueHighlight') highlightColor: string = 'blue';
+```
+
+### Using RendererV2
+
+Alternative implementation of `BlueHighlightDirective` using `RendererV2`
+
+```
+export class BlueHighlightDirective {
+  constructor(private elementRef: ElementRef, private renderer: RendererV2) {
+  }
+  
+  @HostListener('mouseEnter') mouseOver(eventData: Event) {
+      this.renderer.setStyle(elementRef.nativeElement, 'background-color', 'blue', false, false);
+  }
+  
+  @HostListener('mouseLeave') mouseLeave(eventData: Event) {
+      this.renderer.setStyle(elementRef.nativeElement, 'background-color', 'transparent', false, false);
+  }
+}
+```
 

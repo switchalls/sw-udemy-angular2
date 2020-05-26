@@ -13,11 +13,13 @@ View [getting started](https://getbootstrap.com/docs/4.0/getting-started/introdu
       Manage Recipe <span class="caret"></span>
   </button>
   <ul class="dropdown-menu">
-      <li>To Shopping List</li>
-      <li>Edit Recipe</li>
-      <li>Delete Recipe</li>
+      <li><a href="#">To Shopping List</a></li>
+      <li><a href="#">Edit Recipe</a></li>
+      <li><a href="#">Delete Recipe</a></li>
   </ul>
   ```
+
+  *NB.* Requires bootstrap javascript to enable menus ; see `DropdownDirective` for manual solution
 
 * [Data form](https://getbootstrap.com/docs/4.0/components/forms/)
   

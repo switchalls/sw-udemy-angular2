@@ -22,3 +22,22 @@ eg.
 ```bash
 $ git log
 ```
+
+## macOS developer tools
+
+Required by [node-gyp](https://github.com/nodejs/node-gyp)
+
+Manually download `Command Line Tools` from [Apple Developers](https://developer.apple.com/download/more/)
+
+Verify installation:
+
+```bash
+$ /usr/sbin/pkgutil --packages | grep CL
+com.apple.pkg.CLTools_Executables
+com.apple.pkg.CLTools_SDK_macOS1015
+com.apple.pkg.CLTools_SDK_macOS1014
+com.apple.pkg.CLTools_macOS_SDK
+com.kyocera.kyoceraMacintosh.PCL_b.pkg
+```
+
+*NB.* Required after 10.5.4 and 10.5.5 macOS updates
