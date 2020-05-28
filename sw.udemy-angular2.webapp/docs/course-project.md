@@ -133,6 +133,8 @@ export class Recipe {
 
 ### Two-way property binding
 
+Use `ngModel`, eg.
+
 ```
 <input ... [(ngModel)] = "serverName" />
 
@@ -149,6 +151,8 @@ export class CockpitComponent {
 
 ### Passing references to HTML elements
 
+Pass HTML elements into `typescript` methods using `#name`, eg.
+
 ```
 <input ... #serverNameInput />
 
@@ -162,6 +166,8 @@ export class CockpitComponent {
 ```
 
 ### Binding directly to HTML elements
+
+Use `@ViewChild` to bind to HTML elements, eg.
 
 ```
 <input ... #serverNameInput />
@@ -177,6 +183,8 @@ export class CockpitComponent {
 
 ### Passing data into components
 
+Use `@Input` to declare properties that can be `set` from outside the component, eg.
+
 ```
 export class ServerElementComponent {
   @Input() serverElement: {type: string, name: string, content: string};
@@ -190,9 +198,11 @@ export class ServerElementComponent {
 
 ### Sending data from components
 
+Use `#Output` to declare event emitters, eg.
+
 ```
 export class CockpitComponent {
-  @Output serverCreated = new EventOmitter<{serverName: string, serverContent: string}>();
+  @Output serverCreated = new EventEmitter<{serverName: string, serverContent: string}>();
 
   onAddServer(serverNameInput: HTMLInputElement, serverContentInput: HTMLInputElement) {
     serverCreated.emit({serverName: serverNameInput.value, serverContent: serverContentInput.value});
@@ -209,6 +219,8 @@ export class AppComponent {
 ```
 
 ### Passing HTML content into components
+
+Use `ng-content` to declare HTML blocks that can be defined outside the component, eg.
 
 * `server-element.component.html`
 
@@ -239,6 +251,8 @@ export class AppComponent {
 
 ### Core directives
 
+ngIf, ngFor, ngSwitch, ngClass & ngStyle, eg.
+
 ```
 <div *ngIf="!showOddNumbersOnly">
   <li
@@ -255,57 +269,59 @@ export class AppComponent {
 
 ### Custom directives
 
-Create `blue-highlight/blue-highlight.directive.ts` using
+* Create `blue-highlight/blue-highlight.directive.ts` using
+  
+  ```bash
+  $ ng generate directive blue-highlight`
+  ```
 
-```bash
-$ ng generate directive blue-highlight`
-```
-
-Add implementation
-
-```
-@Directive({
-  selector: '[appBlueHighlight]'
-})
-export class BlueHighlightDirective implements OnInit {
-  @Input() defaultColor: string = 'transparent';
-  @Input() highlightColor: string = 'blue';
-
-  @HostBinding('style.backgroundColor') backgroundColor: string;
-
-  constructor(private elementRef: ElementRef) {
+* Add implementation
+  
+  ```
+  @Directive({
+      selector: '[appBlueHighlight]'
+  })
+  export class BlueHighlightDirective implements OnInit {
+      @Input() defaultColor: string = 'transparent';
+      @Input() highlightColor: string = 'blue';
+      
+      @HostBinding('style.backgroundColor') backgroundColor: string;
+      
+      constructor(private elementRef: ElementRef) {
+      }
+      
+      ngOnInit() {
+          this.backgroundColor = this.defaultColor;
+      }
+      
+      @HostListener('mouseEnter') mouseOver(eventData: Event) {
+          this.backgroundColor = this.highlightColor;
+      }
+      
+      @HostListener('mouseLeave') mouseLeave(eventData: Event) {
+          this.backgroundColor = this.defaultColor;
+      }
   }
+  ```
 
-  ngOnInit() {
-    this.backgroundColor = this.defaultColor;
-  }
+* Import declaration in `app.module.ts`
+  
+  ```
+  @NgModule({
+      declarations: [
+          BlueHighlightDirective
+      ],
+  ```
 
-  @HostListener('mouseEnter') mouseOver(eventData: Event) {
-    this.backgroundColor = this.highlightColor;
-  }
-
-  @HostListener('mouseLeave') mouseLeave(eventData: Event) {
-    this.backgroundColor = this.defaultColor;
-  }
-}
-```
-
-Import declaration in `app.module.ts`
-
-```
-@NgModule({
-  declarations: [
-    BlueHighlightDirective
-  ],
-```
-
-Use directive in HTML content
-
-```
-<p appBlueHighlight [defaultColor]="'yellow'" [highlightColor]="'red'"> ... </p>
-```
+* Use directive in HTML content
+  
+  ```
+  <p appBlueHighlight [defaultColor]="'yellow'" [highlightColor]="'red'"> ... </p>
+  ```
 
 ### Default directive property binding
+
+For example,
 
 ```
 <p [appBlueHighlight]="'red'"> ... </p>
@@ -335,4 +351,98 @@ export class BlueHighlightDirective {
   }
 }
 ```
+
+## Services
+
+For example,
+
+```
+export class LoggingService {
+  logStatusChanged(status: string) {
+    console.log('status changed: ' + status);
+  }
+}
+
+@Injectable
+export class AccountsService {
+  accounts = [];
+
+  constructor(private logger: LoggingService) {
+  }
+
+  addAccount(name: string, status: string) {
+    this.accounts.push({name: name, status: status});
+    this.logger.logStatusChanged(status);
+  }
+
+  updateStatus(id: number, status: string) {
+    this.accounts[id].status = status;
+    this.logger.logStatusChanged(status);
+  }
+}
+```
+
+Declare in `*.service.ts` files.
+
+Use `@Injectable` when dependency injection required.
+
+Declare service in `providers` when injecting into components or directives, eg.
+
+```
+@Component({
+  providers: [AccountsService]
+})
+```
+
+### Cross-Component Communication
+
+Use `EventEmitter`
+
+```
+export class AccountsService {
+  statusUpdated = new EventEmitter<string>();
+}
+
+export class AccountComponent {
+  @Input() id: number;
+
+  constructor(private accountsServce: AccountsService) {
+  }
+
+  onSetStatus(status: string) {
+    this.accountsService.updateStatus(this.id, status);
+    this.accountsService.statusUpdated.emit(status);
+  }
+}
+
+export class NewAccountComponent {
+  constructor(private accountsService: AccountService) {
+    this.accountsService.statusUpdated.subscribe(
+       (status: string) => console.log('account status changed: ' + status);
+    );
+  }
+}
+``` 
+
+### Dependency injection
+
+Declare global services in `app.module.ts`, eg.
+
+```
+@NgModule({
+  providers: [AccountsService]
+})
+```
+
+Declare service in `*.comoponent.ts` for local to component (and its children), eg.
+
+```
+@Component({
+  providers: [AccountsService]
+})
+```
+
+Local declarations override global ones, ie.
+
+![Injector](images/hierarchical-injector.png)
 
