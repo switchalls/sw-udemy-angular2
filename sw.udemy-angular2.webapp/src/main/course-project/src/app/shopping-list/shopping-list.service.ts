@@ -6,20 +6,20 @@ export class ShoppingListService {
 
     ingredientsChanged = new EventEmitter<Ingredient[]>();
 
-    private ingrediants: Ingredient[] = [];
+    private ingredients: Ingredient[] = [];
 
     getIngredients() {
-        return this.ingrediants.slice();
+        return this.ingredients.slice();
     }
 
     addIngredient(newIngredient: Ingredient) {
-        this.ingrediants.push(newIngredient);
-        this.ingredientsChanged.emit(this.ingrediants.slice());
+        this.ingredients.push(newIngredient);
+        this.ingredientsChanged.emit(this.ingredients.slice());
     }
 
     addIngredients(newIngredients: Ingredient[]) {
-        this.ingrediants.push(...newIngredients);
-        this.ingredientsChanged.emit(this.ingrediants.slice());
+        this.ingredients.push(...newIngredients);
+        this.ingredientsChanged.emit(this.ingredients.slice());
     }
 
 }

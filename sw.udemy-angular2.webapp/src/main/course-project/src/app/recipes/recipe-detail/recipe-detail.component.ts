@@ -16,7 +16,7 @@ export class RecipeDetailComponent {
     }
 
     onAddToShoppingList(recipe: Recipe) {
-        this.recipeService.addIngredientsToShoppingList(this.recipe);
+        this.recipeService.addIngredientsToShoppingList(recipe);
     }
 
 }
