@@ -39,6 +39,8 @@ See [trouble shooting](trouble-shooting.md)
 
 * JavaScript [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 
+* Angular [Observables](https://angular.io/guide/observables)
+
 * [Bootstrap toolkit](./bootstrap-toolkit.md)
 
 * [Internationalisation](https://angular.io/guide/i18n)

@@ -41,7 +41,7 @@ However ... what you should do is ...
   ]
   ```
 
-## Creating the components
+## Creating components
 
 Use `ng generate component`
 
@@ -98,6 +98,14 @@ Date: 2020-05-10T18:40:24.396Z - Hash: 316a72c5e94e8a7a39cf - Time: 4995ms
 
 The server will automatically rebuilt the application whenever changes are made.
 
+## Debugging tools
+
+* [Augury](https://augury.rangle.io/)
+
+## Component Lifecycle Hooks
+
+![Lifecycle](images/component-lifecycle-hooks.png)
+
 ## Bean declarations
 
 ```
@@ -122,10 +130,6 @@ export class Recipe {
     }
 }
 ```
-
-## Debugging tools
-
-* [Augury](https://augury.rangle.io/)
 
 ## Property & Event Binding
 
@@ -241,10 +245,6 @@ Use `ng-content` to declare HTML blocks that can be defined outside the componen
   </app-server-element
   ```
 
-## Component Lifecycle Hooks
-
-![Lifecycle](images/component-lifecycle-hooks.png)
-
 ## Directives
 
 ![Directives](images/directives.png)
@@ -352,6 +352,139 @@ export class BlueHighlightDirective {
 }
 ```
 
+## Observables
+
+See [angular.io](https://angular.io/guide/observables)
+
+See [academind.com](https://academind.com/learn/javascript/understanding-rxjs/)
+
+![What are they?](images/observables.png)
+
+### Example usage
+
+```
+import { interval, Subscription } from 'rxjs';
+
+export class TestComponent implements OnInit, OnDestroy {
+    private intervalSubscription: Subscription;
+
+    ngOnInit() {
+        this.intervalSubscription = interval(1000).subscribe( (count: number) => {
+            console.log(count + " seconds have passed");
+        });
+    }
+
+    ngOnDestroy() {
+        this.intervalSubscription.unsubscribe();
+    }
+}
+```
+
+*Warning -* Failure to stop subscriptions will cause memory leaks
+
+*NB.* Angular automatically stops subscriptions for observables it provides (eg. `route.params`). 
+
+### Custom observable
+
+```
+const myObservable = Observable.create(observer => {
+    let count = 0;
+
+    setInterval( () => {
+        observer.next(count);
+
+        if (count > 3) {
+            observer.error(new Error("count > 3!"));
+        }
+
+        if (count === 5) {
+            observer.complete();
+        }
+
+        count++;
+    }, 1000);
+});
+
+this.mySubscription = myObservable.subscribe(
+    (data: number) => {
+        console.log("Data changed: " + data);
+    },
+    error => {
+        console.log("Error: " + error);
+    },
+    () => {
+        console.log("Completed!");
+    }
+);
+```
+
+Errors will raise exceptions (inside the application) unless the `error` callback is provided.
+
+`complete` stops the observable, but you still need to unsubscribe.
+
+`complete` is not fired on error.
+
+### Operators
+
+See [learnrxjs.io](https://www.learnrxjs.io/)
+
+Use `pipe` to convert published data into new forms, eg. changing the numeric counter into a message
+
+```
+this.mySubscription = myObservable
+    .pipe(map( (data: number) => {
+        return "Round " + (data + 1);
+    })).subscribe(
+        (data: string) => {
+            console.log("Data changed: " + data);
+        },
+        error => { ... }
+        () => { ... }
+    );
+```
+
+### Subjects
+
+See [learnrxjs.io](https://www.learnrxjs.io/)
+
+Replacement for `EventEmitter` for cross-component communication.
+
+*NB.* You must still use `EventEmitter` for `@Output` properties.
+
+```
+export class UserService {
+    activatedEmitter = new Subject<boolean>;
+}
+
+@Injectable()
+export class UserComponent {
+    constructor(private userService: UserService) {
+    }
+
+    onActivated() {
+        userService.activatedEmitter.next(true);
+    }
+}
+
+@Injectable()
+export class MyComponent implements OnInit, OnDestroy {
+    private activatedSubscription: Subscription;
+
+    constructor(private userService: UserService) {
+    }
+
+    ngOnInit() {
+        this.activatedSubscription = this.userService.subscribe( (flag: boolean) => {
+            console.log("User activation: " + flag);
+        });
+    }
+
+    ngOnDestroy() {
+        this.activatedSubscription.unsubscribe();
+    }
+}
+```
+
 ## Services
 
 For example,
@@ -396,33 +529,7 @@ Declare service in `providers` when injecting into components or directives, eg.
 
 ### Cross-Component Communication
 
-Use `EventEmitter`
-
-```
-export class AccountsService {
-  statusUpdated = new EventEmitter<string>();
-}
-
-export class AccountComponent {
-  @Input() id: number;
-
-  constructor(private accountsServce: AccountsService) {
-  }
-
-  onSetStatus(status: string) {
-    this.accountsService.updateStatus(this.id, status);
-    this.accountsService.statusUpdated.emit(status);
-  }
-}
-
-export class NewAccountComponent {
-  constructor(private accountsService: AccountService) {
-    this.accountsService.statusUpdated.subscribe(
-       (status: string) => console.log('account status changed: ' + status);
-    );
-  }
-}
-``` 
+Use `Subject`
 
 ### Dependency injection
 
@@ -570,20 +677,14 @@ When the number of routes is too large for embedding.
   paramsSubscription: Subscription;
   
   ngOnInit() {
-      this.paramsSubscription = this.route.params.subscribe(
-          (params: Params) => {
-              this.user.id = +params['id'];
-              this.user.name = params['name'];
-          },
-      );
-  }
-  
-  ngOnDestroy() {
-      this.paramsSubscription.unsubscribe();
+      this.route.params.subscribe( (params: Params) => {
+          this.user.id = +params['id'];
+          this.user.name = params['name'];
+      });
   }
   ```
   
-  *NB*. Angular will automatically unsubscribe `params` subscriptions, but most `observables` require manual unsubscription
+  *NB.* Angular automatically stops subscriptions for observables it provides (eg. `route.params`). 
 
 ### Query parameters & Fragments
 
@@ -703,13 +804,11 @@ eg. Only allow authenticated users to edit server details
       loggedIn = false;
       
       isAuthenticated() {
-          const promise = new Promise(
-              (resolve, reject) => {
-                  setTimeout(() => {
-                      resolve(this.loggedIn);
-                  }, 1000);
-              }
-          );
+          const promise = new Promise( (resolve, reject) => {
+              setTimeout( () => {
+                  resolve(this.loggedIn);
+              }, 1000);
+          });
       }
       
       login() {
@@ -731,15 +830,13 @@ eg. Only allow authenticated users to edit server details
       }
       
       canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) : Observable<boolean> | Promise<boolean> | boolean {
-          return this.authService.isAuthenticated().then(
-              (authenticated: boolean) => {
-                  if (authenticated) {
-                      return true;
-                  }
-                  
-                  this.router.navigate(['/']);
+          return this.authService.isAuthenticated().then( (authenticated: boolean) => {
+              if (authenticated) {
+                  return true;
               }
-          );
+              
+              this.router.navigate(['/']);
+          });
       }
       
       canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) : Observable<boolean> | Promise<boolean> | boolean {
@@ -801,7 +898,6 @@ eg. Ask user to confirm when they want to discard changes
   
   ```
   export class EditServerComponent implements, OnInit, CanComponentDeactivate {
-  
       canDeactivate() : Observable<boolean> | Promise<boolean> | boolean {
           if (!this.changesSaved) {
               // ask user to confirm by displaying confirm dialog
@@ -810,7 +906,6 @@ eg. Ask user to confirm when they want to discard changes
           
           return true;
       }
-  
   }
   ```
 
@@ -879,11 +974,9 @@ Lookup data as part of routing.
       
       ngOnInit() {
           // page can be refreshed (with new data) whilst being displayed, so must use observable
-          this.route.data.subscribe(
-              (data: Data) => {
-                  this.server = data['server'];
-              }
-          );
+          this.route.data.subscribe( (data: Data) => {
+              this.server = data['server'];
+          });
       }
   }
   ```

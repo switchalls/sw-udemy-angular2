@@ -3,11 +3,13 @@
 See [course](https://www.udemy.com/course/the-complete-guide-to-angular-2/)
 
 To compile:
+
 ```bash
 $ mvn clean install
 ```
 
 To execute:
+
 ```bash
 $ java -jar sw.udemy-angular2.launcher/target/sw-udemy-angular2-launcher-1.0.0-SNAPSHOT.war
 ```

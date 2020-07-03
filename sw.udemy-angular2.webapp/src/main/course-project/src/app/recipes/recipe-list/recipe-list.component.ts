@@ -29,7 +29,7 @@ export class RecipeListComponent implements OnInit {
 
     onRecipeSelected(recipe: Recipe, recipeId: number) {
         console.log("recipeSelected: " + recipeId + "/" + recipe.name)
-        this.recipeService.recipeSelected.emit(recipe);
+        this.recipeService.recipeSelected.next(recipe);
     }
 
 }
