@@ -45,7 +45,7 @@ However ... what you should do is ...
 
 Use `ng generate component`
 
-`--skip false` (used in course notes) changed to `--skipTests=true`
+`--spec false` (used in course notes) changed to `--skipTests=true`
 
 ```bash
 $ cd sw.udemy-angular2.webapp/src/main/web

@@ -19,7 +19,8 @@ export class RecipeListComponent implements OnInit {
         this.recipes = this.recipeService.getRecipes();
     }
 
-    onRecipeSelected(recipe: Recipe) {
+    onRecipeSelected(recipe: Recipe, recipeId: number) {
+        console.log("recipeSelected: " + recipeId + "/" + recipe.name)
         this.recipeService.recipeSelected.emit(recipe);
     }
 
