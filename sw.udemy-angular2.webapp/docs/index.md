@@ -4,7 +4,7 @@ Module contains the webapp(s) created by multiple sections of the course
 
 * [The Basics](the-basics.md) - Simple webapp covering Angular 2 basic constructs
 
-* [Course Project](course-project.md) - The larger more complex webapp
+* [Course Project](course-project/README.md) - The larger more complex webapp
 
 ## Setup developer environment
 
@@ -38,8 +38,6 @@ See [trouble shooting](trouble-shooting.md)
 ## Extra reading
 
 * JavaScript [Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
-
-* Angular [Observables](https://angular.io/guide/observables)
 
 * [Bootstrap toolkit](./bootstrap-toolkit.md)
 
