@@ -10,6 +10,8 @@ export class RecipeService {
 
     recipeSelected = new Subject<Recipe>();
 
+    recipesChanged = new Subject<Recipe[]>();
+
     private recipes: Recipe[] = [
         new Recipe(
             "Vanilla Cake",
@@ -44,6 +46,21 @@ export class RecipeService {
 
     addIngredientsToShoppingList(recipe: Recipe) {
         this.shoppingListService.addIngredients(recipe.ingredients);
+    }
+
+    addRecipe(newRecipe: Recipe) {
+        this.recipes.push(newRecipe);
+        this.recipesChanged.next(this.getRecipes());
+    }
+
+    removeRecipe(index: number) {
+        this.recipes.splice(index, 1);
+        this.recipesChanged.next(this.getRecipes());
+    }
+
+    updateRecipe(index: number, newRecipe: Recipe) {
+        this.recipes[index] = newRecipe;
+        this.recipesChanged.next(this.getRecipes());
     }
 
 }

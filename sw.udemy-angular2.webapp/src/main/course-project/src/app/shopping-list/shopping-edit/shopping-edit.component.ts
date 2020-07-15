@@ -26,9 +26,9 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.ingredientForm = new FormGroup({
             'name': new FormControl(null, Validators.required),
-            'amount': new FormControl(null, [
+            'amount': new FormControl(1, [
                 Validators.required,
-                Validators.pattern("^[0-9]+[0-9]*$")
+                Validators.pattern(/^[0-9]+[0-9]*$/)
              ]),
             'units': new FormControl(this.ingredientUnits[0])
         });
