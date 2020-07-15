@@ -1,4 +1,6 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 import { Ingredient } from '../../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list.service';
@@ -8,20 +10,74 @@ import { ShoppingListService } from '../shopping-list.service';
     templateUrl: './shopping-edit.component.html',
     styleUrls: ['./shopping-edit.component.css']
 })
-export class ShoppingEditComponent {
+export class ShoppingEditComponent implements OnInit, OnDestroy {
 
-    @ViewChild("nameInput") nameInput: ElementRef;
-    @ViewChild("amountInput") amountInput: ElementRef;
-    @ViewChild("unitsInput") unitsInput: ElementRef;
+    ingredientForm: FormGroup;
+
+    ingredientIndex: number = -1;
+
+    ingredientUnits: string[] = ["g", "ml", "units"];
+
+    private startIngredientEditSubscription: Subscription;
 
     constructor(private shoppingListService: ShoppingListService) {
     }
 
+    ngOnInit() {
+        this.ingredientForm = new FormGroup({
+            'name': new FormControl(null, Validators.required),
+            'amount': new FormControl(null, [
+                Validators.required,
+                Validators.pattern("^[0-9]+[0-9]*$")
+             ]),
+            'units': new FormControl(this.ingredientUnits[0])
+        });
+
+        this.startIngredientEditSubscription = this.shoppingListService.startIngredientEdit.subscribe(
+            (index: number) => {
+                this.ingredientIndex = index;
+
+                const ingredientToEdit = this.shoppingListService.getIngredient(index);
+                this.ingredientForm.setValue({
+                    "name": ingredientToEdit.name,
+                    "amount": ingredientToEdit.amount,
+                    "units": ingredientToEdit.units
+                });
+            }
+        );
+    }
+
+    ngOnDestroy() {
+        this.startIngredientEditSubscription.unsubscribe();
+    }
+
     onAddIngredient() {
-        this.shoppingListService.addIngredient(new Ingredient(
-            this.nameInput.nativeElement.value,
-            this.amountInput.nativeElement.value,
-            this.unitsInput.nativeElement.value));
+        const newIngedient = new Ingredient(
+                this.ingredientForm.value.name,
+                this.ingredientForm.value.amount,
+                this.ingredientForm.value.units);
+
+        if (this.isEditing()) {
+            this.shoppingListService.updateIngredient(this.ingredientIndex, newIngedient);
+        } else {
+            this.shoppingListService.addIngredient(newIngedient);
+        }
+
+        this.onClearForm();
+    }
+
+    onDeleteIngredient() {
+        this.shoppingListService.removeIngredient(this.ingredientIndex);
+        this.onClearForm();
+    }
+
+    onClearForm() {
+        this.ingredientForm.reset();
+        this.ingredientIndex = -1;
+    }
+
+    isEditing() {
+        return this.ingredientIndex > -1;
     }
 
 }

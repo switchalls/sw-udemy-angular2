@@ -27,7 +27,7 @@ export class SignupComponent implements OnInit {
 Use {`formGroup`, `formGroupName`, `formControlName`} directives to bind the typescript form to the HTML elements, eg.
 
 ```
-<form [formGroup]="signupForm" (ngSubmit)="onSubmit">
+<form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
         <label for="username">Username</label>
         <input
