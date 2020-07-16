@@ -90,3 +90,10 @@ $ mvn clean install
 1. Dynamic form controls
 1. [Template-Driven](./forms-template-driven.md) forms
 
+## Pipes
+
+[Contents](./pipes.md):
+
+1. Custom pipes
+1. Custom pipelines
+1. Async pipes
