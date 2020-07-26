@@ -17,8 +17,9 @@
                 <li class="dropdown" appDropdown>
                     <a class="dropdown-toggle" style="cursor: pointer;">Manage <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a style="cursor: pointer;">Save Data</a></li>
-                        <li><a style="cursor: pointer;">Load Data</a></li>
+                        <li><a style="cursor: pointer;" (click)="onAddMockRecipes()">Add Mock Recipes</a></li>
+                        <li><a style="cursor: pointer;" (click)="onLoadRecipes()">Load Recipes</a></li>
+                        <li><a style="cursor: pointer;" (click)="onSaveRecipes()">Save Recipes</a></li>
                     </ul>
                 </li>
             </ul>

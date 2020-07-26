@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Subject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
-import { Ingredient } from '../shared/ingredient.model';
 import { Recipe } from './recipe.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
+
+const storageUrl = "https://ng-recipe-book-ba17b.firebaseio.com/recipes.json";
 
 @Injectable()
 export class RecipeService {
@@ -12,36 +15,17 @@ export class RecipeService {
 
     recipesChanged = new Subject<Recipe[]>();
 
-    private recipes: Recipe[] = [
-        new Recipe(
-            "Vanilla Cake",
-            "A classic vanilla cake recipe made completely from scratch!",
-            "https://i2.wp.com/www.sugarspunrun.com/wp-content/uploads/2018/01/Vanilla-Cake-Recipe-1-of-1-15.jpg",
-            [
-                new Ingredient("Flour", 250, "g"),
-                new Ingredient("Milk", 90, "ml"),
-                new Ingredient("Apple", 5, "units")
-            ]),
-        new Recipe(
-            "Beckys Butter Cake",
-            "Butter cake recipe reminiscent of the 1-2-3-4 cake that Grandma may have baked",
-            "https://storcpdkenticomedia.blob.core.windows.net/media/recipemanagementsystem/media/recipe-media-files/recipes/retail/x17/16730-beckys-butter-cake-600x600.jpg?ext=.jpg",
-            [
-                new Ingredient("Flour", 500, "g"),
-                new Ingredient("Sugar", 100, "g"),
-                new Ingredient("Milk", 200, "ml")
-            ]),
-    ];
+    private recipes: Recipe[] = [];
 
-    constructor(private shoppingListService: ShoppingListService) {
-    }
-
-    getRecipes() {
-        return this.recipes.slice();
+    constructor(private http: HttpClient, private shoppingListService: ShoppingListService) {
     }
 
     getRecipe(id: number) {
         return this.recipes[id];
+    }
+
+    getRecipes() {
+        return this.recipes.slice();
     }
 
     addIngredientsToShoppingList(recipe: Recipe) {
@@ -61,6 +45,39 @@ export class RecipeService {
     updateRecipe(index: number, newRecipe: Recipe) {
         this.recipes[index] = newRecipe;
         this.recipesChanged.next(this.getRecipes());
+    }
+
+    loadStoredRecipes(): Observable<Recipe[]>  {
+        return this.http
+            .get<Recipe[]>(storageUrl)
+            .pipe(
+                map(storedRecipes => {
+                    // enure "ingedients" always set before passing onto subscriber
+                    return storedRecipes.map(recipe => {
+                        return { ...recipe, ingredients: recipe.ingredients ? recipe.ingredients : [] };
+                    });
+                }),
+                tap(storedRecipes => {
+                    console.log("Loading " + storedRecipes.length + " recipes");
+                    console.log(storedRecipes);
+
+                    this.recipes = storedRecipes;
+                    this.recipesChanged.next(this.getRecipes());
+                })
+            );
+    }
+
+    saveRecipes() {
+        // use HTTP PUT to override any existing data
+        this.http.put(storageUrl, this.recipes).subscribe(
+            httpResponse => {
+                console.log("Stored " + this.recipes.length + " recipes");
+                console.log(httpResponse);
+            },
+            httpErrorResponse => {
+                alert(httpErrorResponse.message);
+            }
+       );
     }
 
 }
