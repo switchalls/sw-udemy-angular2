@@ -89,7 +89,7 @@ this.mySubscription = myObservable
     );
 ```
 
-## Subjects
+## Subject
 
 See [learnrxjs.io](https://www.learnrxjs.io/)
 
@@ -130,3 +130,26 @@ export class MyComponent implements OnInit, OnDestroy {
     }
 }
 ```
+
+## Behaviour Subject
+
+A `Subject` that remembers the last value it sent.
+
+Declare as per `Subject`, eg.
+
+```
+user = new BehaviorSubject<User>(null);
+```
+
+NB. Constructor argument = initial value.
+
+Use `take` operator to access, eg.
+
+```
+return this.authService.user.pipe(
+    take(1),
+    exhaustMap( user => {
+    }),
+    ...
+```
+

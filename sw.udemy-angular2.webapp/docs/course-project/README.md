@@ -20,6 +20,7 @@ $ mvn clean install
 1. Adding bootstrap (the correct way)
 1. Creating components using `ng`
 1. Shorthand declarations
+1. Property getters
 
 ## Development Tools
 
@@ -59,6 +60,16 @@ $ mvn clean install
 1. Custom observables
 1. Converting published data using `Operators`
 1. Cross-component communications using `Subjects`
+1. Behaviour Subject
+
+## Pipes
+
+[Contents](./pipes.md):
+
+1. Custom pipes
+1. Custom pipelines
+1. Async pipes
+1. Changing observable type mid pipeline
 
 ## Services
 
@@ -90,14 +101,6 @@ $ mvn clean install
 1. Dynamic form controls
 1. [Template-Driven](./forms-template-driven.md) forms
 
-## Pipes
-
-[Contents](./pipes.md):
-
-1. Custom pipes
-1. Custom pipelines
-1. Async pipes
-
 ## Http
 
 [Contents](./http.md):
@@ -107,4 +110,16 @@ $ mvn clean install
 1. Http parameters
 1. Interceptors
 1. Error handling operator
+
+## Authentication
+
+[Contents](./authentication.md):
+
+1. Setup firebase authentication
+1. Loading spinners
+1. Displaying error messages
+1. Sharing observable code
+1. Auto inject tokens
+1. Support page refresh using local storage
+1. Auto redirect user to login page
 

@@ -1,19 +1,39 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+
 import { RecipeService } from '../recipes/recipe.service';
 import { Recipe } from '../recipes/recipe.model';
 import { Ingredient } from '../shared/ingredient.model';
+import { AuthService } from '../auth/auth.service';
+import { User } from '../auth/user.model';
 
 @Component({
     selector: 'app-header',
     templateUrl: './app-header.component.html'
 })
-export class AppHeaderComponent {
+export class AppHeaderComponent implements OnInit, OnDestroy {
 
     @Output() featureSelected = new EventEmitter<string>();
 
+    userSubscription: Subscription;
+    userAuthenticated = false;
     collapsed = true;
 
-    constructor(private recipeService: RecipeService) {
+    constructor(private authService: AuthService, private recipeService: RecipeService) {
+    }
+
+    ngOnInit() {
+        this.userSubscription = this.authService.user.subscribe( (user: User) => {
+            if (user && !user.isExpired()) {
+                this.userAuthenticated = true;
+            } else {
+                this.userAuthenticated = false;
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.userSubscription.unsubscribe();
     }
 
     onSelect(feature: string) {
@@ -59,6 +79,10 @@ export class AppHeaderComponent {
 
     onSaveRecipes() {
         this.recipeService.saveRecipes();
+    }
+
+    onLogout() {
+        this.authService.logout();
     }
 
 }

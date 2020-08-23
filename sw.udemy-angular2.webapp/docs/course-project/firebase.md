@@ -15,3 +15,17 @@ Goto [firebase.google.com](https://console.firebase.google.com/)
 Your target endpoint will be displayed in the confirmation dialog, eg.
 
 ![Service endpoint](images/firebase-create-realtime-database-2.png)
+
+## Setup firebase authentication
+
+* Restrict database access
+  
+  Change rules to use `auth != null`, eg.
+
+![change rules](images/firebase-change-database-access-rules.png)
+
+* Enable email/password based authentication
+
+![Enable authentication](images/firebase-enable-authentication.png)
+
+* Use [authentication API](https://firebase.google.com/docs/reference/rest/auth) to sign-up and login users

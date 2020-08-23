@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Subject, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, take, exhaustMap } from 'rxjs/operators';
 
 import { Recipe } from './recipe.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
+import { AuthService } from '../auth/auth.service';
 
 const storageUrl = "https://ng-recipe-book-ba17b.firebaseio.com/recipes.json";
 
@@ -17,7 +18,7 @@ export class RecipeService {
 
     private recipes: Recipe[] = [];
 
-    constructor(private http: HttpClient, private shoppingListService: ShoppingListService) {
+    constructor(private http: HttpClient, private shoppingListService: ShoppingListService, private authService: AuthService) {
     }
 
     getRecipe(id: number) {
@@ -48,27 +49,27 @@ export class RecipeService {
     }
 
     loadStoredRecipes(): Observable<Recipe[]>  {
-        return this.http
-            .get<Recipe[]>(storageUrl)
-            .pipe(
-                map(storedRecipes => {
-                    // enure "ingedients" always set before passing onto subscriber
-                    return storedRecipes.map(recipe => {
-                        return { ...recipe, ingredients: recipe.ingredients ? recipe.ingredients : [] };
-                    });
-                }),
-                tap(storedRecipes => {
-                    console.log("Loading " + storedRecipes.length + " recipes");
-                    console.log(storedRecipes);
+        // NB. AuthInterceptorService auto injects firebase token
 
-                    this.recipes = storedRecipes;
-                    this.recipesChanged.next(this.getRecipes());
-                })
-            );
+        return this.http.get<Recipe[]>(storageUrl).pipe(
+            map(storedRecipes => {
+                // enure "ingedients" always set before passing onto subscriber
+                return storedRecipes.map(recipe => {
+                    return { ...recipe, ingredients: recipe.ingredients ? recipe.ingredients : [] };
+                });
+            }),
+            tap(storedRecipes => {
+                console.log("Loading " + storedRecipes.length + " recipes");
+                console.log(storedRecipes);
+
+                this.recipes = storedRecipes;
+                this.recipesChanged.next(this.getRecipes());
+            })
+        );
     }
 
     saveRecipes() {
-        // use HTTP PUT to override any existing data
+        // use HTTP PUT to override existing data
         this.http.put(storageUrl, this.recipes).subscribe(
             httpResponse => {
                 console.log("Stored " + this.recipes.length + " recipes");

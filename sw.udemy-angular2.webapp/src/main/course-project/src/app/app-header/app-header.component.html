@@ -9,17 +9,21 @@
         
         <div class="navbar-collapse" [class.collapse]="collapsed" (window:resize)="collapsed = true">
             <ul class="nav navbar-nav">
-                <li routerLinkActive="active"><a [routerLink]="['/recipes']" (click)="onSelect('recipes')">Recipes</a></li>
+                <li routerLinkActive="active"><a [routerLink]="['/login']" *ngIf="!userAuthenticated">Login</a></li>
+                <li routerLinkActive="active"><a [routerLink]="['/recipes']" (click)="onSelect('recipes')" *ngIf="userAuthenticated">Recipes</a></li>
                 <li routerLinkActive="active"><a [routerLink]="['/shopping-list']" (click)="onSelect('shopping-list')">Shopping List</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
+                <li *ngIf="userAuthenticated">
+                    <a style="cursor: pointer;" (click)="onLogout()">Logout</a>
+                </li>
                 <li class="dropdown" appDropdown>
                     <a class="dropdown-toggle" style="cursor: pointer;">Manage <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a style="cursor: pointer;" (click)="onAddMockRecipes()">Add Mock Recipes</a></li>
-                        <li><a style="cursor: pointer;" (click)="onLoadRecipes()">Load Recipes</a></li>
-                        <li><a style="cursor: pointer;" (click)="onSaveRecipes()">Save Recipes</a></li>
+                        <li><a style="cursor: pointer;" (click)="onLoadRecipes()" *ngIf="userAuthenticated">Load Recipes</a></li>
+                        <li><a style="cursor: pointer;" (click)="onSaveRecipes()" *ngIf="userAuthenticated">Save Recipes</a></li>
                     </ul>
                 </li>
             </ul>

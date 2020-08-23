@@ -90,3 +90,25 @@ export class Recipe {
 }
 ```
 
+## Property getters
+
+Use `getter` method to decorate access, eg. adding validation.
+
+Declare as `private` with `_` prefix.
+
+```
+constructor(private _token: string) {
+}
+
+get token() {
+    if (this.tokenExpired()) {
+        return null;
+    }
+
+    return this.token;
+}
+```
+
+Value is read-only.
+
+User `setter` method to change value.

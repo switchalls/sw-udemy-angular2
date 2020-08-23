@@ -109,4 +109,20 @@ export class AppComponent {
 <h2>Status: {{ appStatus | async }}</h2>
 ```
 
+## Changing observable type mid pipeline
+
+Use `exhaustMap` operator to swap observable types mid pipeline.
+
+For example, change from `Observable<User>` to `Observable<Recipe[]>`
+
+```
+return this.authService.user.pipe(
+    take(1),
+    exhaustMap( user => {
+        const token = user.token;
+        return this.http.get<Recipe[]>(...);
+    }),
+    map( receipes => {
+    })
+```
 
