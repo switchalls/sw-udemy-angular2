@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
+import { AlertComponent } from './alert/alert.component';
 import { AppComponent } from './app.component';
 import { AppHeaderComponent } from './app-header/app-header.comoponent';
 import { AppRoutingModule } from './app-routing.module';
@@ -26,6 +27,7 @@ import { ShoppingListService } from './shopping-list/shopping-list.service';
 
 @NgModule({
   declarations: [
+    AlertComponent,
     AppComponent,
     AppHeaderComponent,
     AuthComponent,

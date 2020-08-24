@@ -53,4 +53,8 @@ export class AuthComponent implements OnInit {
         );
     }
 
+    onAlertClosed() {
+        this.error = null;
+    }
+
 }
