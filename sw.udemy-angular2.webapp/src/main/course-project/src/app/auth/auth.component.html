@@ -1,17 +1,23 @@
 <div class="row">
     <div class="col-xs-12 col-md-6 col-md-offset-3">
 
-        <!--  Error alert -->
-        <div *ngIf="error != null">
-            <app-alert [message]="error" (closed)="onAlertClosed()"></app-alert>
-        </div>
-
-        <!--  Embedded error message -->
+        <!-- Errors #1: Embedded message -->
+        <!--
         <div class="alert alert-danger" *ngIf="error != null">
             <p>{{ error }}</p>
         </div>
+        -->
 
-        <!--  Spinner -->
+        <!-- Errors #2: Alert popup using ngIf -->
+        <!--
+        <div *ngIf="error != null">
+            <app-alert [message]="error" (closed)="onAlertClosed()"></app-alert>
+        </div>
+        -->
+
+        <!-- Errors #1: Alert popup using programmatic content -->
+        <ng-template appPlaceholder></ng-template>
+
         <div style="text-align: center;" *ngIf="loading">
             <app-loading-spinner></app-loading-spinner>
         </div>

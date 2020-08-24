@@ -24,6 +24,7 @@ import { DropdownDirective } from './shared/dropdown.directive';
 import { RecipeResolver } from './recipes/recipe-resolver.service';
 import { RecipeService } from './recipes/recipe.service';
 import { ShoppingListService } from './shopping-list/shopping-list.service';
+import { PlaceholderDirective } from './shared/placeholder.directive';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { ShoppingListService } from './shopping-list/shopping-list.service';
     AuthComponent,
     DropdownDirective,
     LoadingSpinnerComponent,
+    PlaceholderDirective,
     RecipesComponent,
     RecipesHomeComponent,
     RecipeDetailComponent,

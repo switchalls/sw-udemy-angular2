@@ -1,22 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 
 import { AuthService, AuthServiceResponse } from './auth.service';
+import { AlertComponent } from '../alert/alert.component';
+import { PlaceholderDirective } from '../shared/placeholder.directive';
 
 @Component({
     selector: 'app-auth',
     templateUrl: 'auth.component.html'
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
+
+    @ViewChild(PlaceholderDirective) alertHost: PlaceholderDirective;
 
     loginForm: FormGroup;
     loginMode = true;
     loading = false;
     error = null;
 
-    constructor(private authService: AuthService, private router: Router) {
+    private closedSubscription: Subscription;
+
+    constructor(
+        private authService: AuthService,
+        private router: Router,
+        private componentFactoryResolver: ComponentFactoryResolver) {
     }
 
     ngOnInit(): void {
@@ -24,6 +33,12 @@ export class AuthComponent implements OnInit {
             "email": new FormControl(null, [ Validators.required, Validators.email ]),
             "password": new FormControl(null, Validators.minLength(6)),
         });
+    }
+
+    ngOnDestroy() {
+        if (this.closedSubscription) {
+            this.closedSubscription.unsubscribe();
+        }
     }
 
     onSwitchMode() {
@@ -49,12 +64,35 @@ export class AuthComponent implements OnInit {
             errorMessage => {
                 this.error = errorMessage;
                 this.loading = false;
+                this.showErrorAlert(errorMessage);
             }
         );
     }
 
     onAlertClosed() {
         this.error = null;
+    }
+
+    private showErrorAlert(errorMessage: string) {
+        const alertComponentFactory = this.componentFactoryResolver.resolveComponentFactory(
+            AlertComponent
+        );
+
+        const viewContainerRef = this.alertHost.viewContainerRef;
+
+        viewContainerRef.clear(); // remove anything that has been rendered
+
+        const newAlert = viewContainerRef.createComponent(alertComponentFactory);
+
+        newAlert.instance.message = errorMessage;
+
+        this.closedSubscription = newAlert.instance.closed.subscribe( () => {
+            // unsubscribe to avoid memory leaks
+            this.closedSubscription.unsubscribe();
+
+            // close newAlert
+            viewContainerRef.clear();
+        });
     }
 
 }

@@ -34,6 +34,7 @@ $ mvn clean install
 [Contents](./components.md):
 
 1. Lifecycle hooks
+1. Dynamic components
 
 ## Property & Event Binding
 
