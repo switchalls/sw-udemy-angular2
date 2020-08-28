@@ -15,7 +15,7 @@ export interface AuthServiceResponse {
    registered?:  boolean;
 }
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class AuthService {
 
     private accountsUrl: string = "https://identitytoolkit.googleapis.com/v1/accounts";

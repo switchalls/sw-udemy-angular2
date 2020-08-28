@@ -124,3 +124,12 @@ $ mvn clean install
 1. Support page refresh using local storage
 1. Auto redirect user to login page
 
+## Modules
+
+[Contents](./modules.md):
+
+1. Declaring modules
+1. Lazy loading modules
+1. Service scope
+1. Ahead-of-time compilation
+

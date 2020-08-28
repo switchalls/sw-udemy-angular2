@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
 
 import { SharedModule } from '../shared/shared.module';
 
 import { AuthComponent } from './auth.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
 
 const authRoutes: Routes = [
     { path: 'login', component: AuthComponent }

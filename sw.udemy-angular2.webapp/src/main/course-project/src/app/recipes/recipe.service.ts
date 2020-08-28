@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Subject, Observable } from 'rxjs';
-import { map, tap, take, exhaustMap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 import { Recipe } from './recipe.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
@@ -9,7 +9,7 @@ import { AuthService } from '../auth/auth.service';
 
 const storageUrl = "https://ng-recipe-book-ba17b.firebaseio.com/recipes.json";
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class RecipeService {
 
     recipeSelected = new Subject<Recipe>();
