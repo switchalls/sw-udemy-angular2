@@ -9,12 +9,6 @@ import { AppHeaderComponent } from './app-header/app-header.comoponent';
 import { AppRoutingModule } from './app-routing.module';
 import { LoadingSpinnerComponent } from './shared/loading-spinner/loading-spinner';
 import { AuthComponent } from './auth/auth.component';
-import { RecipesComponent } from './recipes/recipes.component';
-import { RecipesHomeComponent } from './recipes/recipes-home/recipes-home.component';
-import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.component';
-import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
-import { RecipeItemComponent } from './recipes/recipe-list/recipe-item/recipe-item.component';
-import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component';
 import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
 
@@ -25,6 +19,7 @@ import { RecipeResolver } from './recipes/recipe-resolver.service';
 import { RecipeService } from './recipes/recipe.service';
 import { ShoppingListService } from './shopping-list/shopping-list.service';
 import { PlaceholderDirective } from './shared/placeholder.directive';
+import { RecipesModule } from './recipes/recipes.module';
 
 @NgModule({
   declarations: [
@@ -35,21 +30,16 @@ import { PlaceholderDirective } from './shared/placeholder.directive';
     DropdownDirective,
     LoadingSpinnerComponent,
     PlaceholderDirective,
-    RecipesComponent,
-    RecipesHomeComponent,
-    RecipeDetailComponent,
-    RecipeEditComponent,
-    RecipeItemComponent,
-    RecipeListComponent,
     ShoppingListComponent,
     ShoppingEditComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule,
-    ReactiveFormsModule,
+    RecipesModule
   ],
   providers: [
     AuthService,
