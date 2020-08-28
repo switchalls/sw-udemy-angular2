@@ -1,0 +1,26 @@
+import { NgModule } from '@angular/core';
+
+import { SharedModule } from '../shared/shared.module';
+
+import { AuthComponent } from './auth.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+
+const authRoutes: Routes = [
+    { path: 'login', component: AuthComponent }
+];
+
+@NgModule({
+    declarations: [
+        AuthComponent
+    ],
+    imports: [
+        ReactiveFormsModule,
+        RouterModule.forChild(authRoutes),
+        SharedModule
+    ],
+    exports: [
+        AuthComponent
+    ]
+})
+export class AuthModule {}
