@@ -28,6 +28,9 @@ $ mvn clean install
 
 1. Live development server
 1. Debugging
+1. Environment variables
+1. Ahead-of-time compilation
+1. Application hosting
 
 ## Components
 
@@ -131,5 +134,4 @@ $ mvn clean install
 1. Declaring modules
 1. Lazy loading modules
 1. Service scope
-1. Ahead-of-time compilation
 

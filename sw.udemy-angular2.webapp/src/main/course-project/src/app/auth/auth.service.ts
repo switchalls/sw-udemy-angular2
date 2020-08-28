@@ -6,6 +6,8 @@ import { throwError, BehaviorSubject } from 'rxjs';
 import { User, StoredUser } from './user.model';
 import { Router } from '@angular/router';
 
+import { environment } from '../../environments/environment'
+
 export interface AuthServiceResponse {
    idToken:      string;
    email:        string;
@@ -19,7 +21,6 @@ export interface AuthServiceResponse {
 export class AuthService {
 
     private accountsUrl: string = "https://identitytoolkit.googleapis.com/v1/accounts";
-    private firebaseKey: string = "AIzaSyDUw0zMxJHT2_zv1do50pRpB2daGxCpPa8"; // see project/settings
 
     user = new BehaviorSubject<User>(null);
 
@@ -27,7 +28,7 @@ export class AuthService {
     }
 
     signUp(email: string, password: string) {
-        return this.http.post<AuthServiceResponse>(this.accountsUrl + ':signUp?key='+this.firebaseKey, {
+        return this.http.post<AuthServiceResponse>(this.accountsUrl + ':signUp?key=' + environment.firebaseKey, {
             email: email,
             password: password,
             returnSecureToken: true
@@ -40,7 +41,7 @@ export class AuthService {
     }
 
     signInWithPassword(email: string, password: string) {
-        return this.http.post<AuthServiceResponse>(this.accountsUrl + ':signInWithPassword?key='+this.firebaseKey, {
+        return this.http.post<AuthServiceResponse>(this.accountsUrl + ':signInWithPassword?key=' + environment.firebaseKey, {
             email: email,
             password: password,
             returnSecureToken: true
