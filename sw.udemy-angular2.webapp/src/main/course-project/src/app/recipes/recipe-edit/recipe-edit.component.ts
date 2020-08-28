@@ -83,7 +83,7 @@ export class RecipeEditComponent implements OnInit {
     }
 
     getIngredientControls() {
-        return (<FormArray>this.recipeForm.get('ingredients')).controls;
+        return (this.recipeForm.get('ingredients') as FormArray).controls;
     }
 
     setIngredientControls(recipe: Recipe) {
@@ -103,7 +103,7 @@ export class RecipeEditComponent implements OnInit {
     }
 
     onAddIngredient() {
-        (<FormArray>this.recipeForm.get('ingredients')).push(new FormGroup({
+        (this.recipeForm.get('ingredients') as FormArray).push(new FormGroup({
             "name": new FormControl(null, Validators.required),
             "amount": this.createAmountControl(1),
             "units": new FormControl("g")
@@ -111,7 +111,7 @@ export class RecipeEditComponent implements OnInit {
     }
 
     onRemoveIngredient(index: number) {
-        (<FormArray>this.recipeForm.get('ingredients')).removeAt(index);
+        (this.recipeForm.get('ingredients') as FormArray).removeAt(index);
     }
 
     createAmountControl(value: number) {
