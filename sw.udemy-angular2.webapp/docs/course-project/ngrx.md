@@ -19,7 +19,7 @@ It provides injectable `store` service and integrates with [NxRJ](./observables.
 ## Installation
 
 ```
-£ npm install --save @ngrx/store
+$ npm install --save @ngrx/store
 npm WARN @ngrx/store@10.0.0 requires a peer of @angular/core@^10.0.0 but none is installed. You must install peer dependencies yourself.
 
 + @ngrx/store@10.0.0
@@ -191,4 +191,9 @@ export const appReducerMap: ActionReducerMap<AppState> = {
 };
 ```
 
+## Side effects
+
+```
+$ npm install --save @ngrx/effects
+```
 

@@ -147,4 +147,6 @@ $ mvn clean install
 1. Reducers
 1. Dispatching events
 1. Using store data
+1. Application reducer
+1. Side effects
 

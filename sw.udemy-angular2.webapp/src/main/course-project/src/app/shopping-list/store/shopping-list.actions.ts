@@ -10,12 +10,12 @@ export type AllActions =
     | StartEditing
     | StopEditing;
 
-export const ADD_INGREDIENT = 'ADD_INGREDIENT';
-export const ADD_INGREDIENTS = 'ADD_INGREDIENTS';
-export const UPDATE_INGREDIENT = 'UPDATE_INGREDIENT';
-export const DELETE_INGREDIENT = 'DELETE_INGREDIENT';
-export const START_EDITING = 'START_EDITING';
-export const STOP_EDITING = 'STOP_EDITING';
+export const ADD_INGREDIENT = '[Shopping List] AddIngredient';
+export const ADD_INGREDIENTS = '[Shopping List] AddIngredients';
+export const UPDATE_INGREDIENT = '[Shopping List] UpdateIngredient';
+export const DELETE_INGREDIENT = '[Shopping List] DeleteIngredient';
+export const START_EDITING = '[Shopping List] StartEditing';
+export const STOP_EDITING = '[Shopping List] StopEditing';
 
 export class AddIngredient implements Action {
     readonly type = ADD_INGREDIENT;

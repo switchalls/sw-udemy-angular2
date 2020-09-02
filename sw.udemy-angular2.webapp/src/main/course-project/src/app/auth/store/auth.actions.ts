@@ -4,8 +4,8 @@ export type AllActions =
       UserSignedIn
     | UserSignedOut;
 
-export const USER_SIGNED_IN = 'USER_SIGNED_IN';
-export const USER_SIGNED_OUT = 'USER_SIGNED_OUT';
+export const USER_SIGNED_IN = '[Auth] UserSignedIn';
+export const USER_SIGNED_OUT = '[Auth] UserSignedOut';
 
 export class UserSignedIn implements Action {
     readonly type = USER_SIGNED_IN;
