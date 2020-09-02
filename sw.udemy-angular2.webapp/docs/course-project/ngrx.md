@@ -169,3 +169,24 @@ Use `aync` operator inside HTML, eg.
     <a *ngFor = "let ingredient of (shoppingList | async).ingredients let i = index"
 ```
 
+## Application reducer
+
+Declare the application wide `AppState`, eg.
+
+```
+export interface AppState {
+    auth: fromAuth.State,
+    shoppingList: fromShoppingList.State
+}
+```
+
+Simplify `app.module.ts` by creating a `ActionReducerMap`, eg.
+
+```
+export const appReducerMap: ActionReducerMap<AppState> = {
+    auth: fromAuth.authReducer,
+    shoppingList: fromShoppingList.shoppingListReducer
+};
+```
+
+

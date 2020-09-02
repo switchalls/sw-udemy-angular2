@@ -6,6 +6,7 @@ import { map, tap } from 'rxjs/operators';
 
 import { Recipe } from './recipe.model';
 import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
+import * as fromApp from '../store/app.reducer';
 
 const storageUrl = "https://ng-recipe-book-ba17b.firebaseio.com/recipes.json";
 
@@ -18,7 +19,7 @@ export class RecipeService {
 
     private recipes: Recipe[] = [];
 
-    constructor(private http: HttpClient, private store: Store) {
+    constructor(private http: HttpClient, private store: Store<fromApp.AppState>) {
     }
 
     getRecipe(id: number) {

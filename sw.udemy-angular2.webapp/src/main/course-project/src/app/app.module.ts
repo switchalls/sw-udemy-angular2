@@ -10,9 +10,10 @@ import { AppHeaderComponent } from './app-header/app-header.comoponent';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
-import { shoppingListReducer }  from './shopping-list/store/shopping-list.reducer';
 
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
+
+import * as fromApp from './store/app.reducer';
 
 const applicationRoutes: Routes = [
     { path: '', redirectTo: '/recipes', pathMatch: 'full' },
@@ -33,9 +34,7 @@ async function importRecipesModule() {
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(applicationRoutes),
-    StoreModule.forRoot({
-        shoppingList: shoppingListReducer
-    }),
+    StoreModule.forRoot(fromApp.appReducerMap),
     AuthModule,
     SharedModule,
     ShoppingListModule
