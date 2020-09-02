@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Store } from '@ngrx/store';
 import { Subject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { Recipe } from './recipe.model';
-import { ShoppingListService } from '../shopping-list/shopping-list.service';
-import { AuthService } from '../auth/auth.service';
+import * as ShoppingListActions from '../shopping-list/store/shopping-list.actions';
 
 const storageUrl = "https://ng-recipe-book-ba17b.firebaseio.com/recipes.json";
 
@@ -18,7 +18,7 @@ export class RecipeService {
 
     private recipes: Recipe[] = [];
 
-    constructor(private http: HttpClient, private shoppingListService: ShoppingListService, private authService: AuthService) {
+    constructor(private http: HttpClient, private store: Store) {
     }
 
     getRecipe(id: number) {
@@ -30,7 +30,7 @@ export class RecipeService {
     }
 
     addIngredientsToShoppingList(recipe: Recipe) {
-        this.shoppingListService.addIngredients(recipe.ingredients);
+        this.store.dispatch(new ShoppingListActions.AddIngredients(recipe.ingredients))
     }
 
     addRecipe(newRecipe: Recipe) {

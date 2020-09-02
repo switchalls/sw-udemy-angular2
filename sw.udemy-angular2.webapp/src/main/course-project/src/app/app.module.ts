@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Routes, RouterModule } from '@angular/router';
+import { StoreModule } from '@ngrx/store';
 
 import { AppComponent } from './app.component';
 import { AppHeaderComponent } from './app-header/app-header.comoponent';
@@ -9,6 +10,7 @@ import { AppHeaderComponent } from './app-header/app-header.comoponent';
 import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
+import { shoppingListReducer }  from './shopping-list/store/shopping-list.reducer';
 
 import { AuthInterceptorService } from './auth/auth-interceptor.service';
 
@@ -31,6 +33,9 @@ async function importRecipesModule() {
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot(applicationRoutes),
+    StoreModule.forRoot({
+        shoppingList: shoppingListReducer
+    }),
     AuthModule,
     SharedModule,
     ShoppingListModule

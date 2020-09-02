@@ -135,3 +135,16 @@ $ mvn clean install
 1. Lazy loading modules
 1. Service scope
 
+## NgRx
+
+[Contents](./ngrx.md):
+
+1. Redux vs NgRx
+1. Installation
+1. Store events
+1. Store types
+1. Importing types
+1. Reducers
+1. Dispatching events
+1. Using store data
+
