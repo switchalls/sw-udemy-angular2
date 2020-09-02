@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { catchError, tap } from 'rxjs/operators';
-import { throwError, BehaviorSubject } from 'rxjs';
+import { throwError } from 'rxjs';
 
 import * as AuthActions from './store/auth.actions';
 import * as fromApp from '../store/app.reducer';
 
 import { User, StoredUser } from './user.model';
-import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment'
 
@@ -21,16 +20,16 @@ export interface AuthServiceResponse {
    registered?:  boolean;
 }
 
+const accountsUrl = "https://identitytoolkit.googleapis.com/v1/accounts";
+
 @Injectable({providedIn: 'root'})
 export class AuthService {
 
-    private accountsUrl: string = "https://identitytoolkit.googleapis.com/v1/accounts";
-
-    constructor(private http: HttpClient, private router: Router, private store: Store<fromApp.AppState>) {
+    constructor(private http: HttpClient, private store: Store<fromApp.AppState>) {
     }
 
     signUp(email: string, password: string) {
-        return this.http.post<AuthServiceResponse>(this.accountsUrl + ':signUp?key=' + environment.firebaseKey, {
+        return this.http.post<AuthServiceResponse>(accountsUrl + ':signUp?key=' + environment.firebaseKey, {
             email: email,
             password: password,
             returnSecureToken: true
@@ -43,7 +42,7 @@ export class AuthService {
     }
 
     signInWithPassword(email: string, password: string) {
-        return this.http.post<AuthServiceResponse>(this.accountsUrl + ':signInWithPassword?key=' + environment.firebaseKey, {
+        return this.http.post<AuthServiceResponse>(accountsUrl + ':signInWithPassword?key=' + environment.firebaseKey, {
             email: email,
             password: password,
             returnSecureToken: true
@@ -57,8 +56,6 @@ export class AuthService {
 
     logout() {
         this.store.dispatch(new AuthActions.UserSignedOut());
-        localStorage.removeItem("userData");
-        this.router.navigate(["/login"]);
     }
 
     autoSignIn() {
@@ -89,14 +86,6 @@ export class AuthService {
             token:      response.idToken,
             expiryDate: this.getExpiryDate(+response.expiresIn)
         }));
-
-        const newUser = new User(
-            response.email,
-            response.localId,
-            response.idToken,
-            this.getExpiryDate(+response.expiresIn));
-
-        localStorage.setItem("userData", JSON.stringify(newUser));
     }
 
     private getExpiryDate(seconds: number): Date {

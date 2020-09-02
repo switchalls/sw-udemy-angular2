@@ -1,11 +1,15 @@
 import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 
 import { AuthService, AuthServiceResponse } from './auth.service';
 import { PlaceholderDirective } from '../shared/placeholder.directive';
 import { AlertComponent } from '../shared/alert/alert.component';
+
+import * as AuthActions from './store/auth.actions';
+import * as fromApp from '../store/app.reducer';
 
 @Component({
     selector: 'app-auth',
@@ -25,13 +29,23 @@ export class AuthComponent implements OnInit, OnDestroy {
     constructor(
         private authService: AuthService,
         private router: Router,
-        private componentFactoryResolver: ComponentFactoryResolver) {
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private store: Store<fromApp.AppState>) {
     }
 
     ngOnInit(): void {
         this.loginForm = new FormGroup({
             "email": new FormControl(null, [ Validators.required, Validators.email ]),
             "password": new FormControl(null, Validators.minLength(6)),
+        });
+
+        this.store.select('auth').subscribe(authData => {
+            this.loading = authData.loginRunning;
+            this.error = authData.loginError;
+
+            if (this.error) {
+                this.showErrorAlert(this.error);
+            }
         });
     }
 
@@ -48,29 +62,46 @@ export class AuthComponent implements OnInit, OnDestroy {
     onSubmit() {
         this.loading = true;
 
-        let authObersvable: Observable<AuthServiceResponse>;
+        let authObersvable: Observable<AuthServiceResponse> = null;
         if (this.loginMode) {
-            authObersvable = this.authService.signInWithPassword(this.loginForm.value.email, this.loginForm.value.password);
+/*
+            authObersvable = this.authService.signInWithPassword(
+                this.loginForm.value.email,
+                this.loginForm.value.password);
+*/
+
+            this.store.dispatch(new AuthActions.LoginRequested({
+                email:    this.loginForm.value.email,
+                password: this.loginForm.value.password
+            }));
+
         } else {
             authObersvable = this.authService.signUp(this.loginForm.value.email, this.loginForm.value.password);
         }
 
-        authObersvable.subscribe(
-            response => {
-                this.error = null;
-                this.loading = false;
-                this.router.navigate(["/recipes"]);
-            },
-            errorMessage => {
-                this.error = errorMessage;
-                this.loading = false;
-                this.showErrorAlert(errorMessage);
-            }
-        );
+        if (authObersvable) {
+            authObersvable.subscribe(
+                response => {
+                    this.error = null;
+                    this.loading = false;
+                    this.router.navigate(["/recipes"]);
+                },
+                errorMessage => {
+                    this.error = errorMessage;
+                    this.loading = false;
+                    this.showErrorAlert(errorMessage);
+                }
+            );
+        }
     }
 
     onAlertClosed() {
+        // inform the store to clear any errors
+        this.store.dispatch(new AuthActions.LoginReset());
+
+/*
         this.error = null;
+*/
     }
 
     private showErrorAlert(errorMessage: string) {

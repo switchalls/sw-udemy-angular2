@@ -141,12 +141,15 @@ $ mvn clean install
 
 1. Redux vs NgRx
 1. Installation
-1. Store events
+1. Store actions
 1. Store types
-1. Importing types
+1. Importing action types
 1. Reducers
-1. Dispatching events
+1. Dispatching actions
 1. Using store data
 1. Application reducer
-1. Side effects
+1. Effects
+1. Dispatching actions inside resolvers
+1. Loading store values inside effects
+1. Developer tools
 

@@ -1,5 +1,9 @@
 # NgRX
 
+A central [data store](https://ngrx.io/guide/store) for the whole application, where
+* data changes are triggered by `actions`
+* data `slices` are returned as [Observables](./observables.md)
+
 ## Redux vs NgRx
 
 Using [services](./services.md) to store state and [RxJS](./observables.md) for communication:
@@ -20,26 +24,17 @@ It provides injectable `store` service and integrates with [NxRJ](./observables.
 
 ```
 $ npm install --save @ngrx/store
-npm WARN @ngrx/store@10.0.0 requires a peer of @angular/core@^10.0.0 but none is installed. You must install peer dependencies yourself.
-
-+ @ngrx/store@10.0.0
-added 2 packages from 2 contributors and audited 1498 packages in 5.938s
-
-37 packages are looking for funding
-  run `npm fund` for details
-
-found 275 vulnerabilities (268 low, 7 high)
-  run `npm audit fix` to fix them, or `npm audit` for details
+$ npm install --save @ngrx/effects
 ```
 
-## Store Events
+## Store Actions
 
 eg. `shopping-list.actions.ts`
 
 ```
 export type AllActions = AddIngredient | ...;
 
-export const UPDATE_INGREDIENT = 'UPDATE_INGREDIENT';
+export const UPDATE_INGREDIENT = '[ShoppingList] UpdateIngredient';
 
 export class UpdateIngredient implements Action {
     readonly type = UPDATE_INGREDIENT;
@@ -52,6 +47,8 @@ export class UpdateIngredient implements Action {
 `AllActions` describes all possible `shopping-list` actions ; used in `reducer` declarations.
 
 Each action type is declared as a `class`, eg. `UpdateIngredient`
+
+`[feature] action_name` naming convention used to scope actions names to feature ; avoid name clashes across features
 
 ## Store Types
 
@@ -69,7 +66,7 @@ export interface AppState {
 }
 ```
 
-## Importing Types
+## Importing Action Types
 
 ```
 import * as ShoppingListActions from './store/shopping-list.actions';
@@ -78,17 +75,17 @@ import * as fromShoppingList from './store/shopping-list.reducer';
 
 ## Reducers
 
-Functions that map events the `NgRx` storage, eg. `shopping-list.reducer.ts`
+Functions that map actions onto the `NgRx` storage, eg. `shopping-list.reducer.ts`
 
 Reducers are declared in `app.module.ts`, eg.
 
 ```
 @NgModule({
-  imports: [
-    StoreModule.forRoot({
-        shoppingList: shoppingListReducer
-    })
-  ]
+    imports: [
+        StoreModule.forRoot({
+            shoppingList: shoppingListReducer
+        })
+    ]
 })
 export class AppModule { }
 ```
@@ -114,7 +111,7 @@ export function shoppingListReducer(state: State = initialState, action: Shoppin
 
 Use the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) (`...`) to clone data.
 
-Reducers must support `initial state` (for when application starts) and handle unrecognised events via `default`, eg.
+Reducers must support `initial state` (for when the application starts) and handle unrecognised actions via `default`, eg.
 
 ```
 const initialState: State = {
@@ -131,17 +128,17 @@ export function shoppingListReducer(state: State = initialState, ... {
 }
 ```
 
-*NB.* All reducers receive all events (including `NgRx` events).
+*NB.* All reducers receive all actions (including `NgRx` actions).
 
-Strong type reducer to avoid field name mistmatches in updated state, eg.
+Strong type reducers to avoid field name mismatches in updated states, eg.
 
 ```
 export function shoppingListReducer(...): State {
 ```
 
-*Warning -* Javascript will add wrongly named properties as `new` fields. Typing will allow the editor guide you!
+*Warning -* Javascript will add wrongly named properties as `new` fields. Typing will allow the editor to guide you!
 
-## Dispatching Events
+## Dispatching Actions
 
 ```
 constructor(private store: Store<fromShoppingList.AppState>) {
@@ -164,14 +161,14 @@ onAddIngredient() {
 
 `store#select()` returns [Observable](./observables.md).
 
-Use `aync` operator inside HTML, eg.
+Use `async` operator inside HTML, eg.
 
 ```
 <ul class="list-group">
     <a *ngFor = "let ingredient of (shoppingList | async).ingredients let i = index"
 ```
 
-## Application reducer
+## Application Reducer
 
 Declare the application wide `AppState`, eg.
 
@@ -191,9 +188,170 @@ export const appReducerMap: ActionReducerMap<AppState> = {
 };
 ```
 
-## Side effects
+## Effects
+
+### Setup container class 
+
+Declare container class, eg.
 
 ```
-$ npm install --save @ngrx/effects
+@Injectable()
+export class AuthEffects {
+
+    constructor (private actions: Actions, private http: HttpClient) {
+    }
+
+}
 ```
+
+*NB.* Use `@Injectable` when services should be injected via `constructor`
+
+Import, eg.
+
+```
+@NgModule({
+    imports: [
+        EffectsModule.forRoot([
+            AuthEffects
+        ]),
+    ]
+})
+export class AppModule { }
+```
+
+### Adding effects
+
+Create one or more public members (any name) annotated with `@Effect`, eg.
+
+```
+@Effect()
+loginRequestedEffect = this.actions.pipe(
+    ofType(AuthActions.LOGIN_REQUESTED),
+    switchMap( (action: AuthActions.LoginRequested) => {
+        return this.http
+            .post<AuthServiceResponse>(...)
+            .pipe(
+                map(responseData => {
+                    return new AuthActions.UserSignedIn(...)
+                }),
+                catchError(error => {
+                    return of(new AuthActions.LoginFailed(...);
+                })
+            );
+    })
+);
+```
+
+Effect observers must *always* return an active observable containing a `replacement` action (aka. the `next` action in the chain).
+
+`ofType` restricts action types handled by `pipe` (ie. the action types this `pipe` consumes)
+
+`switchMap` returns the `replacement` action when `post` is successful.
+
+`catchError` never propagates the error. Use `of` to return the `replacement` action, eg. `LoginFailed`
+
+Use `dispatch: false` when the `pipe` does not return a `replacement` action, eg.
+
+```
+@Effect({dispatch: false})
+userSignedOutEffect = this.actions.pipe(
+    ofType(AuthActions.USER_SIGNED_OUT),
+    tap( (action: AuthActions.UserSignedOut) => {
+        ...
+    })
+);
+```
+
+## Dispatching Actions Inside Resolvers
+
+`store#dispatch()` does not return observable.
+
+Use `Actions` inside the resolver, eg.
+
+```
+@Injectable({providedIn: 'root'})
+export class RecipeResolver implements Resolve<Recipe> {
+
+    constructor(private store: Store<fromApp.AppState>, private actions: Actions) {
+    }
+
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) : Promise<Recipe> | Observable<Recipe> | Recipe {
+        this.store.dispatch(new RecipesActions.FetchRecipes()); // triggers SET_RECIPES
+
+        // return a new observer that waits for FETCH_RECIPES to complete
+
+        return this.actions.pipe(
+            ofType(RecipesActions.SET_RECIPES),
+            take(1)
+        );
+    }
+
+}
+```
+
+## Loading Store Values Inside Effects
+
+Use `withLatestFrom` to return the value from an observable, eg.
+
+```
+@Effect({dispatch: false})
+storeRecipes = this.actions.pipe(
+    ofType(RecipesActions.STORE_RECIPES),
+    withLatestFrom(this.store.select('recipes')),
+    switchMap( ([actionData, recipesState]) => {
+        return this.http.put('http://...', recipesState.recipes)
+    })
+);
+```
+
+`withLatestFrom` passes its return value into `switchMap` as the 2nd parameter (`recipesState`)
+
+## Developer tools
+
+### Store Devtools
+
+See [Redux devtools](https://github.com/zalmoxisus/redux-devtools-extension)
+
+Install, eg.
+
+```
+$ npm install --save-dev @ngrx/store-devtools
+```
+
+Import, eg.
+
+```
+@NgModule({
+    imports: [
+        StoreDevtoolsModule.instrument({ logOnly: environment.production })
+    ]
+})
+```
+
+Use browser plugin, eg.
+
+![console](./images/ngrx-devtools.png)
+
+### Router store
+
+See [ngrx.io](https://ngrx.io/guide/router-store)
+
+Install, eg.
+
+```
+$ npm install --save-dev @ngrx/router-store
+```
+Import, eg.
+
+```
+@NgModule({
+    imports: [
+        StoreRouterConnectingModule.forRoot()
+    ]
+})
+```
+
+Use via `devtools` plugin, eg.
+
+![console](./images/ngrx-router-store.png)
 
