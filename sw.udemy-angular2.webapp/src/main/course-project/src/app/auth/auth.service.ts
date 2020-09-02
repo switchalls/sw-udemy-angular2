@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Store } from '@ngrx/store';
 import { catchError, tap } from 'rxjs/operators';
 import { throwError, BehaviorSubject } from 'rxjs';
+
+import * as AuthActions from './store/auth.actions';
+import * as fromApp from '../store/app.reducer';
 
 import { User, StoredUser } from './user.model';
 import { Router } from '@angular/router';
@@ -22,9 +26,7 @@ export class AuthService {
 
     private accountsUrl: string = "https://identitytoolkit.googleapis.com/v1/accounts";
 
-    user = new BehaviorSubject<User>(null);
-
-    constructor(private http: HttpClient, private router: Router) {
+    constructor(private http: HttpClient, private router: Router, private store: Store<fromApp.AppState>) {
     }
 
     signUp(email: string, password: string) {
@@ -54,7 +56,7 @@ export class AuthService {
     }
 
     logout() {
-        this.user.next(null);
+        this.store.dispatch(new AuthActions.UserSignedOut());
         localStorage.removeItem("userData");
         this.router.navigate(["/login"]);
     }
@@ -70,19 +72,29 @@ export class AuthService {
                 new Date(storedUser._expiryDate));
 
             if (!restoredUser.isExpired()) {
-                this.user.next(restoredUser);
+                this.store.dispatch(new AuthActions.UserSignedIn({
+                    email:      storedUser.email,
+                    userId:     storedUser.id,
+                    token:      storedUser._token,
+                    expiryDate: new Date(storedUser._expiryDate)
+                }));
             }
         }
     }
 
     private addLoginDetails(response: AuthServiceResponse) {
+        this.store.dispatch(new AuthActions.UserSignedIn({
+            email:      response.email,
+            userId:     response.localId,
+            token:      response.idToken,
+            expiryDate: this.getExpiryDate(+response.expiresIn)
+        }));
+
         const newUser = new User(
             response.email,
-            response.idToken,
+            response.localId,
             response.idToken,
             this.getExpiryDate(+response.expiresIn));
-
-        this.user.next(newUser);
 
         localStorage.setItem("userData", JSON.stringify(newUser));
     }

@@ -114,7 +114,7 @@ export function shoppingListReducer(state: State = initialState, action: Shoppin
 
 Use the [spread operator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax) (`...`) to clone data.
 
-Reducers must support `initial state` (for when application starts) and handle non application events (eg. init store) via `default`, eg.
+Reducers must support `initial state` (for when application starts) and handle unrecognised events via `default`, eg.
 
 ```
 const initialState: State = {
@@ -130,6 +130,8 @@ export function shoppingListReducer(state: State = initialState, ... {
     }
 }
 ```
+
+*NB.* All reducers receive all events (including `NgRx` events).
 
 Strong type reducer to avoid field name mistmatches in updated state, eg.
 

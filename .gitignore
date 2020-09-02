@@ -5,3 +5,6 @@ springboot-console.log
 target/
 **/.DS_Store
 **/node_modules
+/.firebase/**
+/.firebaserc
+/firebase.json
