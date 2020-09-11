@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { ActivatedRoute, Data, Params, Router } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
@@ -8,7 +9,30 @@ import { RecipeService } from '../recipe.service';
 @Component({
   selector: 'app-recipe-edit',
   templateUrl: 'recipe-edit.component.html',
-  styleUrls: ['./recipe-edit.component.css']
+  styleUrls: ['./recipe-edit.component.css'],
+  animations: [
+        trigger('recipeAnimations', [
+            state('ingredientInList', style({
+                opacity:   1,
+                transform: 'translateX(0)'
+            })),
+            transition('void => *', [
+                style({
+                    opacity:   0,
+                    transform: 'translateX(-100px)'
+                }),
+                animate(300)
+            ]),
+            transition('* => void', [
+                animate(300),
+                style({
+                    opacity:   0,
+                    transform: 'translateX(100px)'
+                })
+            ])
+        ])
+    ]
+
 })
 export class RecipeEditComponent implements OnInit {
 

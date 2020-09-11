@@ -1,8 +1,9 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { Routes, RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Routes, RouterModule } from '@angular/router';
 import { StoreModule } from '@ngrx/store';
 
 import { AppComponent } from './app.component';
@@ -34,6 +35,7 @@ async function importRecipesModule() {
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     RouterModule.forRoot(applicationRoutes),
     StoreModule.forRoot(fromApp.appReducerMap),

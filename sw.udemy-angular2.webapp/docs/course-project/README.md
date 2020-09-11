@@ -153,3 +153,10 @@ $ mvn clean install
 1. Loading store values inside effects
 1. Developer tools
 
+## Animations
+
+[Contents](./animations.md)
+
+1. Enable
+1. List item animations
+

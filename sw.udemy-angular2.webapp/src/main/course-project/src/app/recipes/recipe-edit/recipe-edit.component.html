@@ -43,7 +43,8 @@
                         class="row"
                         style="margin-bottom: 5px;"
                         *ngFor="let ingredientControl of getIngredientControls(); let i = index"
-                        [formGroupName]="i">
+                        [formGroupName]="i"
+                        [@recipeAnimations]>
 
                         <div class="col-xs-6">
                             <input type="text" class="form-control" formControlName="name" />

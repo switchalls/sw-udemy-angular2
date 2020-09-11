@@ -7,7 +7,9 @@
                 *ngFor = "let ingredient of (shoppingList | async).ingredients let i = index"
                 class="list-group-item"
                 style="cursor: pointer; margin-bottom: 5px;"
-                (click)="onEditIngredient(i)">
+                (click)="onEditIngredient(i)"
+                [@shoppingListAnimations]>
+
                 {{ ingredient.name }} ({{ ingredient.amount }} {{ ingredient.units }})
             </a>
         </ul>
