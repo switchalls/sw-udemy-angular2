@@ -6,20 +6,20 @@
         <div class="alert alert-danger" *ngIf="error != null">
             <p>{{ error }}</p>
         </div>
+
+        <form
+            [formGroup]="loginForm"
+            (ngSubmit)="onSubmit()"
+            *ngIf="!loading">
+
+            ...
+        </form>
         -->
 
-        <!-- Errors #2: Alert popup using ngIf -->
+        <!-- Errors #2: Alert pop-up using ngIf -->
         <!--
         <div *ngIf="error != null">
             <app-alert [message]="error" (closed)="onAlertClosed()"></app-alert>
-        </div>
-        -->
-
-        <!-- Errors #1: Alert popup using programmatic content -->
-        <ng-template appPlaceholder></ng-template>
-
-        <div style="text-align: center;" *ngIf="loading">
-            <app-loading-spinner></app-loading-spinner>
         </div>
 
         <form
@@ -27,20 +27,36 @@
             (ngSubmit)="onSubmit()"
             *ngIf="!loading">
 
-            <div class="form-group">
-                <label for="email">Email: </label>
-                <input type="email" id="email" class="form-control" formControlName="email" />
-            </div>
-            <div class="form-group">
-                <label for="password">Password: </label>
-                <input type="password" id="password" class="form-control" formControlName="password" />
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <button type="submit" class="btn btn-success" [disabled]="!loginForm.valid">{{ loginMode ? 'Login' : 'Sign Up' }}</button>
-                    <button type="button" class="btn btn-primary" (click)="onSwitchMode()">Switch to {{ loginMode ? 'Sign Up' : 'Login'}}</button>
-                </div>
-            </div>
+            ...
         </form>
+        -->
+
+        <!-- Errors #1: Alert pop-up using programmatic content -->
+        <div class="backdrop">
+            <ng-template appPlaceholder></ng-template>
+    
+            <div class="spinner-box" [@spinnerAnimations]="spinnerState">
+                <app-loading-spinner></app-loading-spinner>
+            </div>
+    
+            <div class="login-box">
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group">
+                        <label for="email">Email: </label>
+                        <input type="email" id="email" class="form-control" formControlName="email" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password: </label>
+                        <input type="password" id="password" class="form-control" formControlName="password" />
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <button type="submit" class="btn btn-success" [disabled]="!loginForm.valid">{{ loginMode ? 'Login' : 'Sign Up' }}</button>
+                            <button type="button" class="btn btn-primary" (click)="onSwitchMode()">Switch to {{ loginMode ? 'Sign Up' : 'Login'}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>

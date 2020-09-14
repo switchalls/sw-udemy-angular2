@@ -36,11 +36,12 @@ speed-measure-plugin*.json
 /connect.lock
 /coverage
 /libpeerconnection.log
+/typings
 npm-debug.log
 yarn-error.log
 testem.log
-/typings
 
 # System Files
 .DS_Store
 Thumbs.db
+/package-lock.json

@@ -159,4 +159,5 @@ $ mvn clean install
 
 1. Enable
 1. List item animations
+1. Stateful animations
 

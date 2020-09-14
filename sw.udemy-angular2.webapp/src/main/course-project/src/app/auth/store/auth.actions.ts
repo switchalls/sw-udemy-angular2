@@ -24,7 +24,6 @@ export class UserSignedIn implements Action {
     }) {}
 }
 
-
 export class UserSignedOut implements Action {
     readonly type = USER_SIGNED_OUT;
 }

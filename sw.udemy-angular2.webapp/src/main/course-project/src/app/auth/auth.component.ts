@@ -1,4 +1,5 @@
 import { Component, OnInit, ComponentFactoryResolver, ViewChild, OnDestroy } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -12,13 +13,29 @@ import * as AuthActions from './store/auth.actions';
 import * as fromApp from '../store/app.reducer';
 
 @Component({
-    selector: 'app-auth',
-    templateUrl: 'auth.component.html'
+    selector:    'app-auth',
+    templateUrl: 'auth.component.html',
+    styleUrls:   [ 'auth.component.css' ],
+    animations: [
+        trigger('spinnerAnimations', [
+            state('hidden', style({
+                opacity: 0,
+                visibility: 'hidden'
+            })),
+            state('visible', style({
+                opacity: 0.5,
+                visibility: 'visible'
+            })),
+            transition('hidden => visible', animate(150)),
+            transition('visible => hidden', animate(0))
+        ])
+    ]
 })
 export class AuthComponent implements OnInit, OnDestroy {
 
     @ViewChild(PlaceholderDirective) alertHost: PlaceholderDirective;
 
+    spinnerState = 'hidden';
     loginForm: FormGroup;
     loginMode = true;
     loading = false;
@@ -43,6 +60,10 @@ export class AuthComponent implements OnInit, OnDestroy {
             this.loading = authData.loginRunning;
             this.error = authData.loginError;
 
+            if (!this.loading) {
+                this.spinnerState = 'hidden';
+            }
+
             if (this.error) {
                 this.showErrorAlert(this.error);
             }
@@ -60,6 +81,7 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
+        this.spinnerState = 'visible';
         this.loading = true;
 
         let authObersvable: Observable<AuthServiceResponse> = null;
@@ -82,18 +104,22 @@ export class AuthComponent implements OnInit, OnDestroy {
         if (authObersvable) {
             authObersvable.subscribe(
                 response => {
-                    this.error = null;
-                    this.loading = false;
+                    this.onLoadingStopped(null);
                     this.router.navigate(["/recipes"]);
                 },
                 errorMessage => {
-                    this.error = errorMessage;
-                    this.loading = false;
+                    this.onLoadingStopped(errorMessage);
                     this.showErrorAlert(errorMessage);
                 }
             );
         }
     }
+
+    onLoadingStopped(errorMessage: string) {
+        this.spinnerState = 'hidden';
+        this.loading = false;
+        this.error = errorMessage;
+   }
 
     onAlertClosed() {
         // inform the store to clear any errors

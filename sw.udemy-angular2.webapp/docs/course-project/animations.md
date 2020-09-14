@@ -34,7 +34,7 @@ Declare `trigger` in component, eg. `shopping-list.component.ts`
 })
 ```
 
-Enable `trigger` in view using `[@]`, `shopping-list.component.html`
+Enable `trigger` in view using `[@]`, eg. `shopping-list.component.html`
 
 ```
 <ul class="list-group">
@@ -87,5 +87,21 @@ Enable `trigger` in view using `[@]`, `shopping-list.component.html`
         ])
     ]
 })
+```
+
+## Stateful animations
+
+Assign variable when declaring animations in view, eg. `auth.component.html`
+
+```
+<div class="spinner-box" [@spinnerAnimations]="spinnerState">
+```
+
+Trigger animations by assigning new vales to variable, eg. `auth.component.ts`
+
+```
+onSubmit() {
+    this.spinnerState = 'visible';
+    this.loading = true;
 ```
 
