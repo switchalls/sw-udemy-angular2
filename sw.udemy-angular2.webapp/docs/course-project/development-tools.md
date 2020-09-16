@@ -119,3 +119,13 @@ drwxr-xr-x   6 stewartw  1390471550     192 28 Aug 22:19 ..
 
 eg. [firebase](./firebase.md) hosting
 
+
+## Testing
+
+For example, `auth.component.spec.ts`
+
+Run tests using:
+
+```
+$ ng test
+```

@@ -31,6 +31,7 @@ $ mvn clean install
 1. Environment variables
 1. Ahead-of-time compilation
 1. Application hosting
+1. Testing
 
 ## Components
 
