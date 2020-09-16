@@ -10,7 +10,7 @@ For example,
 
 ## Custom pipes
 
-* Create file, eg. `example.pipe.ts`
+* Create file, eg. `shorten.pipe.ts`
   
   ```
   @Pipe({
@@ -22,7 +22,7 @@ For example,
           if (value.length < limit) {
              return value;
           }
-          return value.substr(0, limit) + ' ...';
+          return value.substr(0, limit) + '...';
       }
   
   }
