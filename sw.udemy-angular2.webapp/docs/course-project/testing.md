@@ -38,7 +38,7 @@ describe('ShortenPipe', () => {
 
 Components with dependencies, eg. `auth.component.spec.ts`
 
-Use `beforeEach` to setup declarations and imports, eg.
+Use `TestBed` to setup declarations and imports, eg.
 
 ```
 describe('AuthComponent', () => {
@@ -55,23 +55,62 @@ describe('AuthComponent', () => {
     });
 ```
 
-### Aync wrapper
+### Async wrapper
 
-When component runs async tasks (eg. `Promise`), eg.
+When components run async tasks, eg. `Promise`
 
-*TBD* - Example
+Wrap the test with `async()` to enable, eg.
 
-### Mock store
+```
+it ('should sign-up user', async( () => {
+    ...
 
-Setup initial state using `provideMockStore`, eg.
+    fixture.whenStable().then(() => {
+        ...
+    });
+}));
+```
+
+Use `fixture.whenStable()` to make tests wait for all async operations to complete.
+
+### Verifying date values
+
+Use `jasmine.clock().mockDate()` to mock the system clock, eg.
 
 ```
 describe('AuthComponent', () => {
-    let store: MockStore;
+    let mockDate: Date;
+
+    beforeEach(() => {
+        mockDate = new Date('2020-01-01');
+        jasmine.clock().mockDate(mockDate);
+    });
+
+    ...
+
+    const expectedDate = new Date();
+    expectedDate.setSeconds(mockDate.getSeconds() + 1024);
+
+    expect(dispatchSpy).toHaveBeenCalledWith(
+        new AuthActions.UserSignedIn({
+            email:      'signupEmail',
+            userId:     'signupUserId',
+            token:      'signupToken',
+            expiryDate: expectedDate
+        })
+    );
+```
+
+### Mock store
+
+Use `provideMockStore` to setup initial state, eg.
+
+```
+describe('AuthComponent', () => {
+    let mockStore: MockStore;
 
     let initialState = {
         auth: {
-            user: null,
             loginError: null,
             loginRunning: false
         },
@@ -86,26 +125,99 @@ describe('AuthComponent', () => {
             ]
         });
 
-        store = TestBed.inject(MockStore);
+        mockStore = TestBed.inject(MockStore);
     });
+```
+
+Use `spyOn` to verify `dispatch()` calls, eg.
+
+```
+let dispatchSpy = spyOn(mockStore, 'dispatch');
+
+...
+
+fixture.whenStable().then(() => {
+    const expectedDate = new Date();
+    expectedDate.setSeconds(mockDate.getSeconds() + 1024);
+
+    expect(dispatchSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledWith(
+        new AuthActions.UserSignedIn({
+            email:      'signupEmail',
+            userId:     'signupUserId',
+            token:      'signupToken',
+            expiryDate: expectedDate
+        })
+    );
+});
+```
+
+Use `setState()` to simulate state changes, eg.
+
+```
+mockStore.setState({
+    auth: {
+        loginError: "test error message",
+        loginRunning: false
+    }
+});
+
+fixture.whenStable().then(() => {
+    fixture.detectChanges();
+
+    expect(component.loading).toBe(false);
+    expect(component.error).toBe('test error message');
+});
 ```
 
 ### Test HttpClient
 
-Import using `HttpClientTestingModule`, eg.
+Import `HttpClientTestingModule` to enable, eg.
 
 ```
+const firebaseSignUpUrl = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=...`;
+
 describe('AuthComponent', () => {
+    let mockHttpClient: HttpTestingController;
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [
                 HttpClientTestingModule,
             ],
         });
+
+        mockHttpClient = TestBed.inject(HttpTestingController);
     });
 ```
 
-*TBD* - Usage?
+Use `mockHttpClient.expectOne(<url>)` to setup request mock(ing), eg.
+
+```
+    it ('should simulate response', async(() => {
+        const signUpSuccessful: AuthServiceResponse = {
+           idToken:      "signupToken",
+           email:        "signupEmail",
+           refreshToken: "signupRefreshToken",
+           expiresIn:    "1024",
+           localId:      "signupUserId"
+        };
+
+        const signupRequest = mockHttpClient.expectOne(firebaseSignUpUrl);
+        signupRequest.flush(signUpSuccessful);
+
+        fixture.whenStable().then(() => {
+            expect(signupRequest.request.method).toBe("POST");
+            expect(signupRequest.request.body.email).toBe('test@test.com');
+            expect(signupRequest.request.body.password).toBe('1234');
+            expect(signupRequest.request.body.returnSecureToken).toBe(true);
+        });
+    }));
+```
+
+Use `flush()` to mock responses.
+
+*NB.* Request url(s) must match exactly
 
 ### Test router
 
@@ -113,14 +225,26 @@ Install routes using `RouterTestingModule`, eg.
 
 ```
 describe('AuthComponent', () => {
+    let location: Location;
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [
-                RouterTestingModule.withRoutes([])
+                RouterTestingModule.withRoutes([
+                    { path: 'recipes', component: RecipesComponent },
+                ]),
             ],
         });
+
+        location = TestBed.get(Location);
     });
 ```
 
-*TBD* - Usage?
+Use `location` to verify page changes, eg.
+
+```
+fixture.whenStable().then(() => {
+    expect(location.path()).toBe('/recipes');
+});
+```
 
