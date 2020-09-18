@@ -49,3 +49,47 @@ But, sometimes you want to create components programmatically.
   ```
 
 Use `viewContainerRef.clear()` to remove the new component, eg. close the pop-up
+
+### Angular elements
+
+Imagine we want to dynamically inject HTML content at runtime, eg. `app.component.html`
+
+```
+<div [innerHTML]="content"></div>
+```
+
+The following does not work:
+
+```
+export class AppComponent {
+
+    constructor(injector: Injector, domSantizer: DomSanitizer) {
+        this.content = "<app-alert message='Test message'></app-alert>"; 
+    }
+
+}
+```
+
+Why? Application tags (eg. `app-alert`) are converted into HTML during compilation. They are not recognised by the browser.
+
+Use [Angular elements](https://angular.io/guide/elements) to inject Angular content at runtime, eg.
+
+```
+constructor(injector: Injector, domSantizer: DomSanitizer) {
+    const alertElement = createCustomElement(AlertComponent, {
+        injector: injector
+    });
+
+    customElements.define('my-alert', alertElement);
+
+    this.content = domSantizer.bypassSecurityTrustHtml("<my-alert message='Test message'></my-alert>"); 
+}
+```
+
+Use `bypassSecurityTrustHtml` to enable `innerHTML` injection at runtime
+
+*NB.* By default, Angular blocks `innerHTML` injection to avoid CSF attacks etc, eg.
+
+![warning](./images/warning-santizing.png)
+
+

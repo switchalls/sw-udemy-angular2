@@ -40,6 +40,7 @@ $ mvn clean install
 
 1. Lifecycle hooks
 1. Dynamic components
+1. Angular elements
 
 ## Property & Event Binding
 
