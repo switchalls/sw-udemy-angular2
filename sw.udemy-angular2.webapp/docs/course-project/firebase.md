@@ -32,6 +32,8 @@ Your target endpoint will be displayed in the confirmation dialog, eg.
 
 ## Application hosting
 
+*Warning* - These `manual` steps can be avoided by using [ng deploy](./development-tools.md) 
+
 * Install, eg. `brew install firebase-cli`
 * Login, eg.
   
@@ -72,5 +74,3 @@ Your target endpoint will be displayed in the confirmation dialog, eg.
   ```
 
 * Open application in browser, eg. `https://ng-recipe-book-ba17b.web.app/index.html`
-
-  

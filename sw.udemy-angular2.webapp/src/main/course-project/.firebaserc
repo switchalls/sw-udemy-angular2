@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "ng-recipe-book-ba17b": {
+      "hosting": {
+        "udemy-angular2": [
+          "ng-recipe-book-ba17b"
+        ]
+      }
+    }
+  }
+}

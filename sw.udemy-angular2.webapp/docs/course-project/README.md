@@ -26,6 +26,7 @@ $ mvn clean install
 
 [Contents](./development-tools.md):
 
+1. Angular CLI
 1. Live development server
 1. Debugging
 1. Environment variables
