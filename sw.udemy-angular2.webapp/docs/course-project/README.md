@@ -164,3 +164,9 @@ $ mvn clean install
 1. List item animations
 1. Stateful animations
 
+## Extra stuff (learnt along the way)
+
+1. Inject template content without wrapper tag
+1. Install JQuery plugins
+1. Display Emoji(s)
+
